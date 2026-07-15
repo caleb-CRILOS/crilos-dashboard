@@ -1,0 +1,715 @@
+@import "tailwindcss";
+
+/* ============================================================
+   "KORE" token mapping — see kore-design-system.md.
+   Cyber-classical print sheet: BONE substrate, INK doing ~90% of
+   the geometry, ONE Signal blue spent with nerve. Unlike the prior
+   acid system, blue CAN be text (--signal-ink passes AA on bone).
+   Faces: Space Grotesk (display + body) + JetBrains Mono (data).
+
+   Variable NAMES are kept stable (every component already consumes
+   them); only the values change. Names are semantically inverted
+   from their labels — `--ink` is the BONE PAGE SURFACE and `--paper`
+   is the INK-BLACK TEXT — so bg-ink / text-paper keep meaning across
+   the theme swap without touching 30+ files.
+   ============================================================ */
+:root {
+  /* Surfaces (bone) */
+  --ink: #e7e3d6; /* Bone — base sheet surface */
+  --ink-raised: #efece2; /* Bone2 — cards, panels */
+  --ink-recessed: #efece2; /* Bone2 — sidebar, alt sections */
+  --ink-elevated: #fbfaf5; /* Paper — inputs, whitest raised */
+  /* Text */
+  --paper: #111110; /* Ink — primary text AND all hairlines */
+  --paper-dim: #45443e; /* Ink Soft — secondary text */
+  --paper-faint: #6e6d65; /* legible mid-gray — tertiary labels (AA) */
+  /* Accent-as-text defaults to INK; blue applied deliberately via
+     --signal-ink where a real link / index / status lives. */
+  --electric: #111110; /* Ink — eyebrows, icons */
+  --electric-bright: #0c77c2; /* Signal — graphic fills */
+  --electric-deep: #0a5f9e; /* Signal Deep — pressed */
+  /* The single accent + family */
+  --clay: #0c77c2; /* Signal blue — CTA fill, active marker, highlight */
+  --clay-soft: #cfe3f2; /* Pale blue — rare tinted fills */
+  --clay-deep: #0a5f9e; /* Signal Deep — hover/pressed */
+  --purple-soft: #8a8a82; /* Halftone (neutral gray) */
+  --gold: #111110; /* warnings → ink (differentiated by [!] label) */
+  --sage: #08558c; /* success / ✓ → Signal Ink */
+  --line: #8a8a82; /* Halftone — soft hairlines, row dividers */
+  --line-strong: #111110; /* Ink — crisp plate frames */
+  /* KORE-specific additions */
+  --signal-fg: #fbfaf5; /* Paper — light text on Signal/Ink fills */
+  --signal-ink: #08558c; /* blue text/links at body size on bone (AA 6.1:1) */
+  /* DM 2 Close lead-health colors — deliberate literal-color exception to
+     KORE's monochrome+blue rule, scoped to this one indicator. */
+  --dm-health-green: #3f6b45;
+  --dm-health-yellow: #8a5a1e;
+  --dm-health-red: #8b3a2e;
+}
+
+/* ============================================================
+   Alternate color themes. Same name-stable tokens as :root above
+   (which IS the default `kore` palette), only values change — so
+   every Tailwind utility, .hud-panel/.field/.btn-accent, and the
+   halftone body texture re-skins with no component edits. Fonts,
+   radius, and text sizes live in @theme inline and are untouched.
+   The root layout stamps <html data-theme="…"> from settings.theme.
+   Each block re-declares the FULL token set so KORE's value-coupled
+   duplicates (e.g. --clay == --electric-bright) are set per theme.
+   ============================================================ */
+
+/* NOIR — dark inversion: charcoal sheet, bone type + hairlines, warm
+   yellow accent. The accent is now LIGHT, so text sitting on accent
+   fills must be dark: --signal-fg flips to the dark ink here. That's
+   safe because every --signal-fg consumer sits on a --clay (yellow) or
+   --paper (bone) fill, both light in Noir. --signal-ink (link text on
+   the dark surface) stays the bright yellow for legibility. */
+[data-theme="noir"] {
+  --ink: #17160f;
+  --ink-raised: #201e16;
+  --ink-recessed: #1c1a13;
+  --ink-elevated: #29271c;
+  --paper: #e8e4d7;
+  --paper-dim: #b3afa3;
+  --paper-faint: #928d80;
+  --electric: #e8e4d7;
+  --electric-bright: #f6ca5a;
+  --electric-deep: #d9a52e;
+  --clay: #f2c14e;
+  --clay-soft: #3a2f16;
+  --clay-deep: #d9a52e;
+  --purple-soft: #4c4a41;
+  --gold: #e8e4d7;
+  --sage: #f2c14e;
+  --line: #3a3830;
+  --line-strong: #e8e4d7;
+  --signal-fg: #17160f;
+  --signal-ink: #f2c14e;
+  --dm-health-green: #6fae77;
+  --dm-health-yellow: #d3a05a;
+  --dm-health-red: #d67e6f;
+}
+
+/* LIGHT — clean cool-white sheet, ink type, one scarlet accent. Standard
+   light polarity (light surface, dark text), so nothing flips. The accent
+   is SPLIT: bright scarlet for fills (white text on top) and a deeper
+   cardinal for link/index text so it clears AA on the pale sheet. */
+[data-theme="light"] {
+  --ink: #f4f6f7;          /* cool-white base sheet */
+  --ink-raised: #ffffff;   /* cards, panels */
+  --ink-recessed: #e9edf0; /* sidebar / alt sections */
+  --ink-elevated: #ffffff; /* inputs, whitest raised */
+  --paper: #14181d;        /* ink — primary text AND hairlines */
+  --paper-dim: #3f454d;    /* secondary text */
+  --paper-faint: #5c656e;  /* tertiary labels (AA) */
+  --electric: #14181d;     /* eyebrows, icons → ink */
+  --electric-bright: #e63946; /* scarlet — graphic fills */
+  --electric-deep: #c41e3a;   /* deep cardinal — pressed */
+  --clay: #e63946;         /* scarlet — CTA fill, active marker, highlight */
+  --clay-soft: #fbdce0;    /* pale scarlet — rare tinted fills */
+  --clay-deep: #c41e3a;    /* deep cardinal — hover/pressed */
+  --purple-soft: #b9bfc4;  /* halftone (cool gray) */
+  --gold: #14181d;         /* warnings → ink (differentiated by [!] label) */
+  --sage: #c41e3a;         /* success/marker → the accent-ink (deep cardinal) */
+  --line: #cdd2d6;         /* soft hairlines, dot grid, row dividers */
+  --line-strong: #14181d;  /* crisp plate frames */
+  --signal-fg: #ffffff;    /* white text on scarlet/ink fills */
+  --signal-ink: #c41e3a;   /* deep cardinal — links/indices at body size (AA on sheet) */
+  --dm-health-green: #3f6b45;
+  --dm-health-yellow: #8a5a1e;
+  --dm-health-red: #8b3a2e;
+}
+
+/* SLATE — cool light: pale blue-gray paper, near-navy ink, steel accent. */
+[data-theme="slate"] {
+  --ink: #e3e6ea;
+  --ink-raised: #edeff2;
+  --ink-recessed: #edeff2;
+  --ink-elevated: #f8fafb;
+  --paper: #14181d;
+  --paper-dim: #3f454d;
+  --paper-faint: #5a636c;
+  --electric: #14181d;
+  --electric-bright: #3f6b8c;
+  --electric-deep: #325873;
+  --clay: #3f6b8c;
+  --clay-soft: #d3e0ea;
+  --clay-deep: #325873;
+  --purple-soft: #9aa0a8;
+  --gold: #14181d;
+  --sage: #325873;
+  --line: #9aa0a8;
+  --line-strong: #14181d;
+  --signal-fg: #f8fafb;
+  --signal-ink: #325873;
+  --dm-health-green: #3f6b45;
+  --dm-health-yellow: #8a5a1e;
+  --dm-health-red: #8b3a2e;
+}
+
+/* ROSETTE — soft/feminine: blush sheet, deep plum ink, rose accent.
+   Ties to the existing Rosette motif. */
+[data-theme="rosette"] {
+  --ink: #f3e7ea;
+  --ink-raised: #f8eef0;
+  --ink-recessed: #f8eef0;
+  --ink-elevated: #fdf8f9;
+  --paper: #2a1620;
+  --paper-dim: #5a4048;
+  --paper-faint: #71575f;
+  --electric: #2a1620;
+  --electric-bright: #c13e7a;
+  --electric-deep: #a32e64;
+  --clay: #c13e7a;
+  --clay-soft: #f0d4e0;
+  --clay-deep: #a32e64;
+  --purple-soft: #b39aa2;
+  --gold: #2a1620;
+  --sage: #a12e63;
+  --line: #cdb8bf;
+  --line-strong: #2a1620;
+  --signal-fg: #fdf8f9;
+  --signal-ink: #a12e63;
+  --dm-health-green: #3f6b45;
+  --dm-health-yellow: #8a5a1e;
+  --dm-health-red: #8b3a2e;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-ink-recessed: var(--ink-recessed);
+  --color-ink-elevated: var(--ink-elevated);
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-paper-faint: var(--paper-faint);
+  --color-electric: var(--electric);
+  --color-electric-bright: var(--electric-bright);
+  --color-electric-deep: var(--electric-deep);
+  --color-gold: var(--gold);
+  --color-sage: var(--sage);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
+  --color-clay-deep: var(--clay-deep);
+  --color-purple-soft: var(--purple-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-signal-fg: var(--signal-fg);
+  --color-signal-ink: var(--signal-ink);
+  --color-dm-health-green: var(--dm-health-green);
+  --color-dm-health-yellow: var(--dm-health-yellow);
+  --color-dm-health-red: var(--dm-health-red);
+  --color-background: var(--ink);
+  --color-foreground: var(--paper);
+  /* Space Grotesk (display + body), JetBrains Mono (data/labels).
+     Variable names unchanged so next/font keeps wiring them. */
+  --font-display: var(--font-space-grotesk), "Arial Narrow", system-ui, sans-serif;
+  --font-sans: var(--font-space-grotesk), "Arial Narrow", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  /* Zero radius, always. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  /* +1px font-size experiment: exact +1px per Tailwind scale step actually
+     in use (see grep before adding new sizes here). Revert by deleting. */
+  --text-xs: calc(0.75rem + 1px);
+  --text-sm: calc(0.875rem + 1px);
+  --text-base: calc(1rem + 1px);
+  --text-lg: calc(1.125rem + 1px);
+  --text-2xl: calc(1.5rem + 1px);
+  --text-3xl: calc(1.875rem + 1px);
+  --text-4xl: calc(2.25rem + 1px);
+}
+
+/* Page texture: a faint halftone dot grid on Bone, softened by a bone
+   overlay — the spec's "technical print sheet" substrate. */
+body {
+  background-color: var(--ink);
+  background-image: radial-gradient(var(--line) 0.6px, transparent 0.7px);
+  background-size: 5px 5px;
+  color: var(--paper);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0.72;
+  pointer-events: none;
+  z-index: -1;
+}
+
+::selection {
+  background: var(--clay);
+  color: var(--signal-fg);
+}
+
+/* Focus — a Signal-Ink registration keyline (spec §8). */
+:focus-visible {
+  outline: 2.5px solid var(--signal-ink);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   SHEET — the print-sheet the app sits on, framed with hairline
+   ink and corner registration crosshairs.
+   ============================================================ */
+.sheet {
+  position: relative;
+  max-width: 1360px;
+  margin: clamp(12px, 3vw, 40px) auto;
+  background: var(--ink);
+  border: 1.5px solid var(--paper);
+}
+.corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  z-index: 5;
+}
+.corner::before,
+.corner::after {
+  content: "";
+  position: absolute;
+  background: var(--paper);
+}
+.corner::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-0.5px);
+}
+.corner::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-0.5px);
+}
+.corner.tl { top: 8px; left: 8px; }
+.corner.tr { top: 8px; right: 8px; }
+.corner.bl { bottom: 8px; left: 8px; }
+.corner.br { bottom: 8px; right: 8px; }
+.corner.acid::before,
+.corner.acid::after { background: var(--clay); }
+
+/* ============================================================
+   STATUS BAR — thin mono ticker with a blinking Signal dot.
+   ============================================================ */
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem clamp(16px, 4vw, 40px);
+  border-bottom: 1.5px solid var(--paper);
+  font-family: var(--font-mono);
+  font-size: calc(0.625rem + 1px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+.status .dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--clay);
+  margin-right: 7px;
+  vertical-align: middle;
+  animation: blink 1.6s steps(1) infinite;
+}
+.status .grow {
+  flex: 1;
+  min-width: 120px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: right;
+  letter-spacing: 0.06em;
+  padding-left: 2.5rem;
+  color: var(--paper-dim);
+}
+@keyframes blink {
+  50% { opacity: 0.15; }
+}
+
+/* Mono label — the machine voice: tags, eyebrows, nav, data. */
+.label-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+
+/* Section index — a bordered mono chip, blue-ink number (KORE §-idx). */
+.sec-num {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--signal-ink);
+  font-size: calc(0.6875rem + 1px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1.4px solid var(--paper);
+  padding: 4px 9px;
+}
+
+/* Glow classes neutralized — no glow in a print system. */
+.glow-magenta-text,
+.glow-cyan-text {
+  text-shadow: none;
+}
+
+/* Card / panel: bone2 surface, 1.4px ink frame, sharp. */
+.hud-panel {
+  position: relative;
+  border: 1.4px solid var(--line-strong);
+  background: var(--ink-raised);
+}
+.hud-panel::before,
+.hud-panel::after {
+  display: none;
+}
+/* "primary content" plate — a 2px ink top register rule (accent reserved). */
+.hud-panel-magenta {
+  border-top: 2px solid var(--paper);
+}
+
+/* Hard offset shadow (no blur), in ink — the printed-block drop. */
+.stack {
+  box-shadow: 4px 4px 0 0 var(--paper);
+}
+.stack-sm {
+  box-shadow: 3px 3px 0 0 var(--paper);
+}
+
+/* Field: paper input, 1.5px ink border, mono, Signal inset focus ring. */
+.field {
+  width: 100%;
+  background: var(--ink-elevated);
+  border: 1.5px solid var(--paper);
+  color: var(--paper);
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: calc(0.8125rem + 1px);
+  line-height: 1.4;
+}
+.field::placeholder {
+  color: var(--line);
+  text-transform: uppercase;
+  font-size: calc(0.6875rem + 1px);
+  letter-spacing: 0.06em;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--clay);
+  box-shadow: inset 0 0 0 1.5px var(--clay);
+}
+.field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Tags / chips — mono uppercase, 1.3px ink border. No leading mark. */
+.tag {
+  font-family: var(--font-mono);
+  font-size: calc(0.625rem + 1px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border: 1.3px solid var(--paper);
+  background: transparent;
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+.tag--solid {
+  background: var(--clay);
+  color: var(--signal-fg);
+  border-color: var(--clay);
+}
+.tag--mut {
+  color: var(--paper-dim);
+  border-color: var(--line);
+}
+.tag--plain {
+  /* alias kept for existing markup — same as base .tag now */
+}
+
+/* Metadata block — catalogue key/value rows in an ink frame. */
+.meta-block {
+  border: 1.4px solid var(--paper);
+  width: 100%;
+  font-size: calc(0.625rem + 1px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.meta-block .row {
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.meta-block .row:last-child {
+  border-bottom: none;
+}
+.meta-block .k {
+  padding: 0.5rem 0.75rem;
+  color: var(--paper-faint);
+  border-right: 1px solid var(--line);
+  font-weight: 400;
+  font-family: var(--font-mono);
+}
+.meta-block .v {
+  padding: 0.5rem 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Data readout — tabular grid for vitals / coordinates. */
+.readout {
+  width: 100%;
+  border: 1.4px solid var(--paper);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: calc(0.625rem + 1px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.readout > div {
+  padding: 0.75rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.readout > div:nth-child(2n) {
+  border-right: none;
+}
+.readout .lab {
+  color: var(--paper-faint);
+  display: block;
+  font-size: 10px;
+  margin-bottom: 3px;
+}
+.readout b {
+  font-size: calc(0.8125rem + 1px);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* Key-concept list — Signal square bullets, hairline rows. */
+.klist {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.klist li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: calc(0.8125rem + 1px);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.5rem;
+}
+.klist li:last-child {
+  border-bottom: none;
+}
+.klist li::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--clay);
+  flex: none;
+}
+
+/* Highlighter — a Signal block behind light text (the lede accent). */
+.mark {
+  background: var(--clay);
+  color: var(--signal-fg);
+  padding: 0 0.14em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Data panel — the poster's blue info block (a high-value statement). */
+.datapanel {
+  background: var(--clay);
+  border: 1.6px solid var(--clay);
+  color: var(--signal-fg);
+  padding: 1.25rem;
+}
+.datapanel .dp-k {
+  font-family: var(--font-mono);
+  font-size: calc(0.6rem + 1px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+.datapanel .dp-v {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+/* Annotation callout — ink border, 6px Signal left edge, + mark. */
+.callout {
+  position: relative;
+  border: 1.4px solid var(--paper);
+  border-left: 6px solid var(--clay);
+  background: var(--ink-raised);
+  padding: 1rem 1.25rem;
+}
+.callout .cross {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  opacity: 0.4;
+}
+
+/* Dividers. */
+.rule-lab {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.rule-lab::before,
+.rule-lab::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--paper);
+}
+.rule-lab span {
+  font-family: var(--font-mono);
+  font-size: calc(0.625rem + 1px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+.rule-acid {
+  height: 8px;
+  background: var(--clay);
+  border: 1px solid var(--paper);
+}
+
+/* Buttons ------------------------------------------------------------- */
+/* Primary / Accent: Signal fill, light text — the main action. */
+.btn-accent,
+.btn-primary {
+  background: var(--clay);
+  color: var(--signal-fg);
+  border: 1.6px solid var(--paper);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.btn-accent:hover,
+.btn-primary:hover {
+  background: var(--clay-deep);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 0 var(--paper);
+}
+.btn-accent:active,
+.btn-primary:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+.btn-accent:disabled,
+.btn-primary:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  transform: none;
+}
+/* Accent Chip: ghost at rest, takes on .btn-accent's hover look (Signal
+   fill, lift, offset shadow) only on hover -- for small in-row actions
+   (e.g. Document Ops Repository Download/Delete) that shouldn't compete
+   with the page's one full-time accent CTA. */
+.chip-accent {
+  background: transparent;
+  color: var(--paper-faint);
+  border: 1.6px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease,
+    border-color 0.12s ease, color 0.12s ease;
+}
+.chip-accent:hover {
+  background: var(--clay-deep);
+  color: var(--signal-fg);
+  border-color: var(--paper);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 0 var(--paper);
+}
+/* Accent Chip (icon-only variant): no border at rest -- for icon-only
+   in-row actions (e.g. DM 2 Close's delete trash icon) that stay minimal
+   until hovered, then take on the same Signal accent look as
+   .chip-accent/.btn-accent. */
+.chip-accent-icon {
+  background: transparent;
+  color: var(--paper-faint);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+.chip-accent-icon:hover {
+  background: var(--clay-deep);
+  color: var(--signal-fg);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0 0 var(--paper);
+}
+/* Ghost: transparent, ink border; inverts to Ink on hover. */
+.btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border: 1.5px solid var(--paper);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.btn-ghost:hover {
+  background: var(--paper);
+  color: var(--signal-fg);
+}
+.btn-ghost:disabled {
+  opacity: 0.5;
+}
+
+/* Display H1 — Space Grotesk wordmark, tight negative tracking. Not clipped. */
+.bleed-type {
+  display: block;
+  max-width: 100%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(calc(2.5rem + 1px), 6vw, calc(4rem + 1px));
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
