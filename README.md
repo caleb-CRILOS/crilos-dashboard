@@ -69,8 +69,8 @@ doing one of these three things — there's no other way in right now.
 **Install and run**
 
 ```bash
-git clone <your-repo-url> crilos
-cd crilos
+git clone https://github.com/caleb-CRILOS/crilos-dashboard.git
+cd crilos-dashboard
 npm install
 npm run dev
 ```
