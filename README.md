@@ -75,6 +75,12 @@ npm install
 npm run dev
 ```
 
+> **Using Claude Code?** Skip the terminal — open Claude Code and paste:
+> *"Clone https://github.com/caleb-CRILOS/crilos-dashboard.git, run npm
+> install, then start the dev server and open http://localhost:3000."*
+> Claude handles the whole install and launch, asking permission as it goes.
+> (You already have Claude Code — it's a prerequisite above.)
+
 Open http://localhost:3000. Run it on **port 3000** — the sign-in redirect is
 registered for that port. On first launch you'll hit the sign-in gate; once
 you sign in, the dashboard starts completely empty — no sample data — so what
