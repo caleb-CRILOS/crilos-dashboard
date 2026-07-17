@@ -79,7 +79,10 @@ npm run dev
 > *"Clone https://github.com/caleb-CRILOS/crilos-dashboard.git, run npm
 > install, then start the dev server and open http://localhost:3000."*
 > Claude handles the whole install and launch, asking permission as it goes.
-> (You already have Claude Code — it's a prerequisite above.)
+> (You already have Claude Code — it's a prerequisite above.) Afterward,
+> start a **new Claude Code session** inside the `crilos-dashboard` folder
+> — this lets it pick up the project's `/start-dashboard` command (Claude
+> Code only detects new skill folders at session start).
 
 Open http://localhost:3000. Run it on **port 3000** — the sign-in redirect is
 registered for that port. On first launch you'll hit the sign-in gate; once
