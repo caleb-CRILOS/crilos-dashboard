@@ -21,11 +21,14 @@
 const DOMAIN_PLACEHOLDER = "YOUR_MEMBERFUL_SUBDOMAIN";
 const CLIENT_ID_PLACEHOLDER = "YOUR_MEMBERFUL_CLIENT_ID";
 
+// Typed as `string` (not the inferred literal) so the MEMBERFUL_CONFIGURED
+// comparisons below don't become "no-overlap" type errors once real values
+// are filled in -- otherwise `next build`'s type-check fails.
 /** Your Memberful account subdomain, e.g. "acme" for acme.memberful.com. */
-export const MEMBERFUL_DOMAIN = "crilos";
+export const MEMBERFUL_DOMAIN: string = "crilos";
 
 /** The Client ID from your Memberful "Single-page" Custom Application. */
-export const MEMBERFUL_CLIENT_ID = "nv6mdVg3XhpN3egvfmSyxUDC";
+export const MEMBERFUL_CLIENT_ID: string = "nv6mdVg3XhpN3egvfmSyxUDC";
 
 /**
  * OAuth redirect target. Must match the Redirect URL registered on the
