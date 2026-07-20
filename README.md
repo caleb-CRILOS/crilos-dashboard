@@ -89,6 +89,35 @@ registered for that port. On first launch you'll hit the sign-in gate; once
 you sign in, the dashboard starts completely empty — no sample data — so what
 you see is your own, from the moment you first run it.
 
+**Quick launch (day-to-day)**
+
+After that first install you don't need the terminal — just double-click:
+
+- **macOS** — `start.command` (the first time, right-click → **Open** to clear
+  Gatekeeper).
+- **Windows** — `start.cmd`.
+
+Installing also drops a **"CRILOS Start"** shortcut on your Desktop that does the
+same thing — double-click it instead of hunting for the file in the repo folder.
+(Set `CRILOS_NO_SHORTCUT=1` before `npm install` to skip it; run `npm run
+shortcut` to re-create it, e.g. after moving the folder.)
+
+Either one frees **port 3000**, installs anything missing, opens your browser to
+http://localhost:3000, then **closes its own window** — the server keeps running
+in the background. It always uses port 3000: if an old instance was left running
+it stops that first, so you never end up on a stray `localhost:3001` (which would
+break sign-in, since the Memberful redirect is registered for :3000).
+
+**Stopping it:** click **Sign out & quit** in the sidebar. That shuts the local
+server down cleanly — freeing port 3000 and signing you out — and shows a
+"Dashboard stopped" screen you can close. Because the launcher window is gone,
+this (or relaunching the start script) is how you stop it. Relaunch any time with
+the start script above (or `npm run dev`).
+
+If the dashboard doesn't come up, the background server logs to
+`%TEMP%\crilos-dashboard-dev.log` on Windows or `$TMPDIR/crilos-dashboard-dev.log`
+on macOS — check there for the error.
+
 ## Members-only sign-in (Memberful)
 
 The dashboard is gated: when it opens it asks the user to sign in with
@@ -133,8 +162,9 @@ git pull
 npm install   # in case dependencies changed
 ```
 
-Then restart `npm run dev`. On Windows you can run `./update.ps1`; on
-macOS/Linux `./update.sh` — both just run those two commands.
+Then relaunch — double-click `start.cmd` (Windows) or `start.command` (macOS),
+or run `npm run dev`. On Windows you can run `./update.ps1` to do the pull +
+install; on macOS/Linux `./update.sh` — both just run those two commands.
 
 Your personal data is safe across updates: everything you enter lives in
 `data/` and (optionally) `.env.local`, both git-ignored, so `git pull` never

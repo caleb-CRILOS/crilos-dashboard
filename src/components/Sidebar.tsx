@@ -17,6 +17,7 @@ import {
   ChevronDown,
   LucideIcon,
 } from "lucide-react";
+import QuitButton from "./QuitButton";
 const operate = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
   { href: "/inbox", label: "Inbox", icon: Inbox },
@@ -239,14 +240,9 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
             >
               {memberEmail}
             </div>
-            <form action="/api/auth/logout" method="post" className="mt-2">
-              <button
-                type="submit"
-                className="label-mono text-[10px] text-paper-faint transition-colors hover:text-paper"
-              >
-                Sign out
-              </button>
-            </form>
+            <div className="mt-2">
+              <QuitButton />
+            </div>
           </div>
         )}
       </div>

@@ -1,0 +1,8 @@
+# Keep line endings correct per platform regardless of a cloner's core.autocrlf.
+# The macOS launcher MUST stay LF — a CRLF would corrupt its `#!/usr/bin/env bash`
+# shebang and it wouldn't run on double-click.
+*.sh        text eol=lf
+*.command   text eol=lf
+# Windows scripts stay CRLF.
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
