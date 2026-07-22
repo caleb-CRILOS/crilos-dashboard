@@ -9,70 +9,16 @@
 import { google } from "googleapis";
 import type { gmail_v1 } from "googleapis";
 import { Settings } from "./types";
+import { getAuthedClient } from "./googleAuth";
 
-// Derived from googleapis' own google.auth.OAuth2 constructor rather than
-// imported separately from google-auth-library -- googleapis depends on
-// its own nested copy of that package (via googleapis-common), and a
-// top-level import resolves to a structurally-incompatible duplicate
-// under TypeScript's nominal-ish private-field checking.
-type OAuth2Client = InstanceType<typeof google.auth.OAuth2>;
-
-// gmail.modify supersedes gmail.readonly (all read ops) and adds
-// label/trash writes -- needed for mark-as-read and delete. It does NOT
-// grant send or permanent deletion. Widening this scope means anyone
-// already connected under the old readonly+compose grant must
-// reconnect (Reconnect Gmail in Settings) before delete/mark-read will
-// work -- their existing refresh token won't carry the new scope.
-const SCOPES = [
-  "https://www.googleapis.com/auth/gmail.modify",
-  "https://www.googleapis.com/auth/gmail.compose",
-];
-
-export function redirectUri(origin: string): string {
-  return `${origin}/api/email/oauth/callback`;
-}
-
-export function getOAuthClient(settings: Settings, origin: string): OAuth2Client {
-  if (!settings.gmailClientId || !settings.gmailClientSecret) {
-    throw new Error("Gmail client ID/secret aren't set in Settings yet.");
-  }
-  return new google.auth.OAuth2(
-    settings.gmailClientId,
-    settings.gmailClientSecret,
-    redirectUri(origin),
-  );
-}
-
-export function getAuthUrl(oauth2Client: OAuth2Client): string {
-  return oauth2Client.generateAuthUrl({
-    access_type: "offline",
-    prompt: "consent", // forces a refresh_token every time, not just on first-ever consent
-    scope: SCOPES,
-  });
-}
-
-export async function exchangeCodeForTokens(
-  oauth2Client: OAuth2Client,
-  code: string,
-): Promise<{ refreshToken: string }> {
-  const { tokens } = await oauth2Client.getToken(code);
-  if (!tokens.refresh_token) {
-    throw new Error(
-      "Google didn't return a refresh token -- revoke this app's access at " +
-        "https://myaccount.google.com/permissions and try connecting again " +
-        "(Google only issues a refresh token on the first consent, or when prompt=consent is forced).",
-    );
-  }
-  return { refreshToken: tokens.refresh_token };
-}
+// OAuth plumbing (client construction, scopes, consent URL, token
+// exchange) now lives in src/lib/googleAuth.ts, shared with Calendar so
+// Gmail and Calendar ride one consent grant / one refresh token. This
+// module keeps only Gmail's own read/draft/label operations -- and still
+// has NO send function anywhere, per the "draft, never send" note above.
 
 function getGmailClient(settings: Settings, origin: string): gmail_v1.Gmail {
-  if (!settings.gmailRefreshToken) {
-    throw new Error("Gmail isn't connected yet -- connect it from Settings first.");
-  }
-  const oauth2Client = getOAuthClient(settings, origin);
-  oauth2Client.setCredentials({ refresh_token: settings.gmailRefreshToken });
-  return google.gmail({ version: "v1", auth: oauth2Client });
+  return google.gmail({ version: "v1", auth: getAuthedClient(settings, origin) });
 }
 
 export interface UnreadThreadSummary {

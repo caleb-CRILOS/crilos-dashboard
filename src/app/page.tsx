@@ -4,6 +4,7 @@ import { computeDiscoveryCallHealth } from "@/lib/hawk/discoveryCallHealth";
 import DmHealthBadge from "@/components/DmHealthBadge";
 import AgentDirectory from "@/components/AgentDirectory";
 import ActivityFeed, { ActivityItem } from "@/components/ActivityFeed";
+import CalendarPanel from "@/components/CalendarPanel";
 import CircuitDivider from "@/components/CircuitDivider";
 import { Search, PenLine, Send, ClipboardList } from "lucide-react";
 import Link from "next/link";
@@ -150,6 +151,13 @@ export default async function OverviewPage() {
       </div>
 
       <div className="mt-8">
+        <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-paper">
+          Today &amp; this week
+        </h2>
+        <CalendarPanel />
+      </div>
+
+      <div className="mt-10">
         <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-paper">
           Leads needing attention
         </h2>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { exchangeCodeForTokens, getOAuthClient } from "@/lib/gmail";
+import { exchangeCodeForTokens, getOAuthClient } from "@/lib/googleAuth";
 
 // Google redirects here after the user grants (or denies) consent.
 export async function GET(req: NextRequest) {
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     await db.write();
     return NextResponse.redirect(`${req.nextUrl.origin}/settings?gmailConnected=1`);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Could not finish connecting Gmail.";
+    const message = err instanceof Error ? err.message : "Could not finish connecting Google.";
     return NextResponse.redirect(
       `${req.nextUrl.origin}/settings?gmailError=${encodeURIComponent(message)}`,
     );

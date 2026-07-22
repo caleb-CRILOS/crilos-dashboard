@@ -61,7 +61,7 @@ export default function SettingsClient({
     const banner = err
       ? ({ type: "error", text: err } as const)
       : connected
-        ? ({ type: "ok", text: "Gmail connected." } as const)
+        ? ({ type: "ok", text: "Google connected." } as const)
         : null;
     if (banner) setGmailBanner(banner);
     if (err || connected) {
@@ -268,7 +268,7 @@ export default function SettingsClient({
         </div>
       </Section>
 
-      <Section title="Gmail (Inbox skill)">
+      <Section title="Google (Gmail + Calendar)">
         {gmailBanner && (
           <div
             className={`flex items-center gap-2 border-l-[3px] px-3 py-2 text-xs ${
@@ -282,9 +282,9 @@ export default function SettingsClient({
           </div>
         )}
         <p className="text-xs text-paper-faint">
-          Needs a Google Cloud project with the Gmail API enabled and an
-          OAuth client (type &quot;Web application&quot;) with this exact
-          redirect URI added:
+          Needs a Google Cloud project with the Gmail API and Calendar API
+          enabled and an OAuth client (type &quot;Web application&quot;) with
+          this exact redirect URI added:
         </p>
         <code className="block rounded-sm bg-paper/10 px-2 py-1 text-xs text-paper-dim">
           {origin}/api/email/oauth/callback
@@ -310,7 +310,7 @@ export default function SettingsClient({
             className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper"
           >
             <Mail size={14} />
-            {initialSettings._gmailConnected ? "Reconnect Gmail" : "Connect Gmail"}
+            {initialSettings._gmailConnected ? "Reconnect Google" : "Connect Google"}
           </a>
           {initialSettings._gmailConnected && (
             <span className="label-mono flex items-center gap-1 text-[11px] text-sage">
@@ -320,9 +320,11 @@ export default function SettingsClient({
           )}
         </div>
         <p className="text-xs text-paper-faint">
-          Save the client ID/secret above first, then click Connect —
-          Gmail access is read + create-draft only, nothing in this app
-          can send mail.
+          Save the client ID/secret above first, then click Connect. Gmail
+          stays read + create-draft only (nothing here can send mail);
+          Calendar is read plus create/edit/delete events. Already
+          connected before Calendar was added? Click Reconnect once to
+          grant the new access.
         </p>
       </Section>
 
