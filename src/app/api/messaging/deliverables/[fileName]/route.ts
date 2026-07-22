@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import { deliverablePath } from "@/lib/pdf/generate";
 
-const SAFE_FILENAME = /^[a-zA-Z0-9_-]+\.pdf$/;
+const SAFE_FILENAME = /^[a-zA-Z0-9_-]+\.(pdf|png)$/;
 
 export async function GET(
   _req: Request,
@@ -19,9 +19,10 @@ export async function GET(
   }
 
   const buffer = fs.readFileSync(filePath);
+  const isPng = fileName.endsWith(".png");
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
-      "Content-Type": "application/pdf",
+      "Content-Type": isPng ? "image/png" : "application/pdf",
       "Content-Disposition": `inline; filename="${fileName}"`,
     },
   });

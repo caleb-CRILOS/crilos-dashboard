@@ -143,20 +143,16 @@ export default async function OverviewPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <div>
-        <div className="sec-num mb-3">CRILOS · OVERVIEW</div>
-        <h1 className="bleed-type text-paper mt-3">Overview</h1>
+        <h1 className="bleed-type text-paper">Overview</h1>
         <p className="mt-2 text-sm text-paper-dim">
           Your business, and the team running it, in one view.
         </p>
       </div>
 
       <div className="mt-8">
-        <div className="sec-num mb-3">§ 01 · ATTENTION</div>
-        <div className="mb-3">
-          <h2 className="font-display text-lg uppercase tracking-wide text-paper">
-            Leads needing attention
-          </h2>
-        </div>
+        <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-paper">
+          Leads needing attention
+        </h2>
         {attention.length === 0 ? (
           <div className="hud-panel stack p-8 text-center text-sm text-paper-dim">
             No leads need attention right now. Start a thread from DM 2 Close or Discovery Call.
@@ -227,7 +223,6 @@ export default async function OverviewPage() {
       <CircuitDivider />
 
       <div>
-        <div className="sec-num mb-3">§ 02 · ACTIVITY</div>
         <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-paper">
           Recent activity
         </h2>
@@ -235,11 +230,10 @@ export default async function OverviewPage() {
       </div>
 
       <div className="mt-10">
-        <div className="sec-num mb-3">§ 03 · SYSTEM</div>
-        <h2 className="font-display text-lg uppercase tracking-wide text-paper">Agent directory</h2>
-        <div className="mt-4">
-          <AgentDirectory />
-        </div>
+        <h2 className="mb-3 font-display text-lg uppercase tracking-wide text-paper">
+          Agent directory
+        </h2>
+        <AgentDirectory />
       </div>
     </div>
   );

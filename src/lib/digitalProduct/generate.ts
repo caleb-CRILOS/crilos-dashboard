@@ -24,6 +24,7 @@ const EXTENSION_BY_FORMAT: Record<string, string> = {
 const MIME_BY_EXTENSION: Record<string, string> = {
   pdf: "application/pdf",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  png: "image/png",
 };
 
 export function mimeTypeForFileName(fileName: string): string {

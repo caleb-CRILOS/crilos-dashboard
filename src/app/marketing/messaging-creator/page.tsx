@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { AlertCircle, Download, FileText, Megaphone, Play, Plus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  AlertCircle,
+  Download,
+  FileText,
+  Image as ImageIcon,
+  Megaphone,
+  Play,
+  Plus,
+} from "lucide-react";
 import { MessagingSession } from "@/lib/types";
 import ChatMessages from "@/components/ChatMessages";
 import ChatInputRow from "@/components/ChatInputRow";
@@ -15,8 +23,78 @@ export default function MessagingCreatorPage() {
     });
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Rendered slide file names per session (overlays the persisted
+  // session.slideFiles once a fresh render returns), plus a cache-buster so
+  // regenerated thumbnails actually refresh, and per-action UI state.
+  const [slidesBySession, setSlidesBySession] = useState<Record<string, string[]>>({});
+  const [bustBySession, setBustBySession] = useState<Record<string, number>>({});
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [slidesError, setSlidesError] = useState<string | null>(null);
+
+  // Optional background photo per session (overlays session.slideImageFile;
+  // undefined = untouched this session, null = removed). Bust refreshes the
+  // thumbnail after an upload.
+  const [imageBySession, setImageBySession] = useState<Record<string, string | null>>({});
+  const [imageBustBySession, setImageBustBySession] = useState<Record<string, number>>({});
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+
   const started = session !== null || loading;
   const messages = session?.messages ?? [];
+
+  async function generateSlides(sessionId: string) {
+    setGeneratingId(sessionId);
+    setSlidesError(null);
+    try {
+      const res = await fetch("/api/messaging/slides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to render slides");
+      setSlidesBySession((m) => ({ ...m, [sessionId]: data.slideFiles }));
+      setBustBySession((m) => ({ ...m, [sessionId]: Date.now() }));
+    } catch (e) {
+      setSlidesError(e instanceof Error ? e.message : "Failed to render slides");
+    } finally {
+      setGeneratingId(null);
+    }
+  }
+
+  async function uploadImage(sessionId: string, file: File) {
+    setUploadingId(sessionId);
+    setSlidesError(null);
+    try {
+      const form = new FormData();
+      form.set("sessionId", sessionId);
+      form.set("file", file);
+      const res = await fetch("/api/messaging/slides/image", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      setImageBySession((m) => ({ ...m, [sessionId]: data.slideImageFile }));
+      setImageBustBySession((m) => ({ ...m, [sessionId]: Date.now() }));
+    } catch (e) {
+      setSlidesError(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploadingId(null);
+    }
+  }
+
+  async function removeImage(sessionId: string) {
+    setSlidesError(null);
+    try {
+      const res = await fetch(`/api/messaging/slides/image?sessionId=${sessionId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Could not remove image");
+      }
+      setImageBySession((m) => ({ ...m, [sessionId]: null }));
+    } catch (e) {
+      setSlidesError(e instanceof Error ? e.message : "Could not remove image");
+    }
+  }
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -130,6 +208,12 @@ export default function MessagingCreatorPage() {
         <p className="mb-3 text-sm text-paper-dim">
           Finished pieces from every Messaging Creator session, newest last.
         </p>
+        {slidesError && (
+          <div className="mb-3 flex items-center gap-2 border-l-[3px] border-gold bg-ink-raised px-4 py-2 text-sm text-gold">
+            <AlertCircle size={15} />
+            {slidesError}
+          </div>
+        )}
         {allSessions.every((s) => !s.deliverable) ? (
           <div className="hud-panel stack p-8 text-center text-sm text-paper-faint">
             No pieces drafted yet. They&apos;ll show up here once a
@@ -139,29 +223,154 @@ export default function MessagingCreatorPage() {
           <div className="hud-panel stack space-y-2 p-3">
             {allSessions
               .filter((s) => s.deliverable)
-              .map((s) => (
-                <div
-                  key={s.deliverable!.fileName}
-                  className="flex items-center justify-between rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
-                >
-                  <span className="flex items-center gap-2 text-paper-dim">
-                    <FileText size={16} className="text-electric" />
-                    {s.deliverable!.title}
-                    <span className="text-paper-faint">
-                      — {s.clientLabel} · {s.piece.format || "?"} / {s.piece.platform || "?"}
-                    </span>
-                  </span>
-                  <a
-                    href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+              .map((s) => {
+                const format = (s.piece.format || "").toLowerCase();
+                const isCarousel = format.includes("carousel");
+                const isImage = !isCarousel && format.includes("image");
+                const renderable = isCarousel || isImage;
+                const noun = isCarousel ? "slides" : "image";
+                const slides = slidesBySession[s.id] ?? s.slideFiles ?? [];
+                const bust = bustBySession[s.id];
+                const attachedImage =
+                  imageBySession[s.id] !== undefined
+                    ? imageBySession[s.id]
+                    : s.slideImageFile ?? null;
+                const imageBust = imageBustBySession[s.id];
+                return (
+                  <div
+                    key={s.deliverable!.fileName}
+                    className="rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
                   >
-                    <Download size={14} />
-                    View PDF
-                  </a>
-                </div>
-              ))}
+                    <div className="min-w-0">
+                      <div className="flex min-w-0 items-center gap-2 text-paper-dim">
+                        <FileText size={16} className="shrink-0 text-electric" />
+                        <span className="truncate">{s.deliverable!.title}</span>
+                      </div>
+                      <div className="mt-0.5 truncate text-[12px] text-paper-faint">
+                        {s.clientLabel} · {s.piece.format || "?"} / {s.piece.platform || "?"}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {renderable && (
+                        <button
+                          onClick={() => generateSlides(s.id)}
+                          disabled={generatingId === s.id}
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                        >
+                          <ImageIcon size={14} />
+                          {generatingId === s.id
+                            ? "Rendering…"
+                            : `${slides.length ? "Regenerate" : "Generate"} ${noun}`}
+                        </button>
+                      )}
+                      {renderable && (
+                        <label
+                          className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
+                            uploadingId === s.id ? "opacity-50" : ""
+                          }`}
+                        >
+                          <ImageIcon size={14} />
+                          {uploadingId === s.id
+                            ? "Uploading…"
+                            : attachedImage
+                              ? "Change image"
+                              : "Add image"}
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            disabled={uploadingId === s.id}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) uploadImage(s.id, f);
+                              e.target.value = "";
+                            }}
+                          />
+                        </label>
+                      )}
+                      {slides.length > 1 && (
+                        <a
+                          href={`/api/messaging/slides/zip?sessionId=${s.id}`}
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        >
+                          <Download size={14} />
+                          All slides (.zip)
+                        </a>
+                      )}
+                      {slides.length === 1 && (
+                        <a
+                          href={`/api/messaging/deliverables/${slides[0]}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          download
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        >
+                          <Download size={14} />
+                          Download image
+                        </a>
+                      )}
+                      <a
+                        href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      >
+                        <Download size={14} />
+                        View PDF
+                      </a>
+                    </div>
+
+                    {renderable && attachedImage && (
+                      <div className="mt-3 flex items-center gap-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/api/messaging/slides/image?sessionId=${s.id}${
+                            imageBust ? `&t=${imageBust}` : ""
+                          }`}
+                          alt="Slide background"
+                          className="h-16 w-16 shrink-0 rounded-sm border border-line-strong object-cover"
+                        />
+                        <div className="text-[12px] text-paper-faint">
+                          Used as the slide background — regenerate to apply.
+                          <button
+                            onClick={() => removeImage(s.id)}
+                            className="ml-2 text-gold hover:underline"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {slides.length > 0 && (
+                      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                        {slides.map((f, i) => {
+                          const src = `/api/messaging/deliverables/${f}${bust ? `?t=${bust}` : ""}`;
+                          return (
+                            <a
+                              key={f}
+                              href={`/api/messaging/deliverables/${f}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              download
+                              className="shrink-0"
+                              title={`Slide ${i + 1} — open / download`}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={src}
+                                alt={`Slide ${i + 1}`}
+                                className="h-44 w-auto border border-line-strong"
+                              />
+                            </a>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         )}
       </div>

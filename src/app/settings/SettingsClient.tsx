@@ -12,6 +12,7 @@ type MaskedSettings = Settings & {
   _hasSkoolSecret?: boolean;
   _hasGmailClientSecret?: boolean;
   _gmailConnected?: boolean;
+  _hasFalApiKey?: boolean;
 };
 
 export default function SettingsClient({
@@ -37,6 +38,7 @@ export default function SettingsClient({
   const [skoolWebhookSecret, setSkoolWebhookSecret] = useState("");
   const [gmailClientId, setGmailClientId] = useState(initialSettings.gmailClientId ?? "");
   const [gmailClientSecret, setGmailClientSecret] = useState("");
+  const [falApiKey, setFalApiKey] = useState("");
   const [yellowDays, setYellowDays] = useState(
     initialSettings.healthThresholds.yellowDays,
   );
@@ -79,6 +81,7 @@ export default function SettingsClient({
     if (skoolWebhookSecret) body.skoolWebhookSecret = skoolWebhookSecret;
     if (gmailClientId) body.gmailClientId = gmailClientId;
     if (gmailClientSecret) body.gmailClientSecret = gmailClientSecret;
+    if (falApiKey) body.falApiKey = falApiKey;
 
     await fetch("/api/settings", {
       method: "POST",
@@ -89,6 +92,7 @@ export default function SettingsClient({
     // setGhlPrivateToken(""); // ARCHIVED — see state above
     setSkoolWebhookSecret("");
     setGmailClientSecret("");
+    setFalApiKey("");
     setTimeout(() => setSaved(false), 2500);
   }
 
@@ -320,6 +324,30 @@ export default function SettingsClient({
           Gmail access is read + create-draft only, nothing in this app
           can send mail.
         </p>
+      </Section>
+
+      <Section title="Cover image generation (optional)">
+        <p className="text-xs text-paper-faint">
+          Only used when you choose an <span className="text-paper-dim">AI background</span> for a
+          Digital Product cover. Pay-as-you-go on your own{" "}
+          <a
+            href="https://fal.ai/dashboard/keys"
+            target="_blank"
+            rel="noreferrer"
+            className="text-electric hover:underline"
+          >
+            fal.ai
+          </a>{" "}
+          account (~a fraction of a cent per image). Leave blank to keep covers 100% free —
+          the template cover never calls any API.
+        </p>
+        <Field
+          label="fal.ai API key"
+          value={falApiKey}
+          onChange={setFalApiKey}
+          placeholder={initialSettings._hasFalApiKey ? "•••• saved — enter to replace" : "fal-..."}
+          type="password"
+        />
       </Section>
 
       <Section title="Health thresholds">

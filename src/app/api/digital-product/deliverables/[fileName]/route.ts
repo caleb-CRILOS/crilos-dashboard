@@ -3,8 +3,8 @@ import fs from "fs";
 import { deliverablePath } from "@/lib/pdf/generate";
 import { mimeTypeForFileName } from "@/lib/digitalProduct/generate";
 
-const SAFE_FILENAME = /^[a-zA-Z0-9_-]+\.(pdf|docx)$/;
-const INLINE_EXTENSIONS = new Set(["pdf"]);
+const SAFE_FILENAME = /^[a-zA-Z0-9_-]+\.(pdf|docx|png)$/;
+const INLINE_EXTENSIONS = new Set(["pdf", "png"]);
 
 export async function GET(
   _req: Request,

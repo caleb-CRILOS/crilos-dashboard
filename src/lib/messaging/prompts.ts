@@ -119,6 +119,14 @@ Once a topic is settled, ask these one at a time, conversational tone:
    of this piece? Get this straight from them rather than inventing one --
    it closes the final beat of the draft.
 
+If (and only if) the format is a single **image** post (e.g. an IG image or
+a LinkedIn image post -- not a carousel, video, or blog), ask one more
+short question after the CTA: since the dashboard can render this into an
+on-brand graphic, how much text do they want ON the image itself --
+just a hook headline plus the CTA, a hook plus a short one-line intro, or
+a headline only? Keep it casual and note the full caption is still written
+out in full either way. Remember their pick so it carries into the draft.
+
 ## The step-by-step brief
 
 If the client wants to write their own content instead of having it

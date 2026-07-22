@@ -1,9 +1,11 @@
-import { Document, Page, Text, View } from "@react-pdf/renderer";
+import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
+import fs from "fs";
 import { DigitalProductAsset } from "../types";
 import { buildPdfStyles } from "./styles";
 import { getActiveTokens } from "../branding/standard";
 import { cleanText } from "./markdown";
 import { businessLabel } from "./documentIdentity";
+import { deliverablePath } from "./generate";
 
 export default function DigitalProductPdf({
   asset,
@@ -13,8 +15,22 @@ export default function DigitalProductPdf({
   clientLabel: string;
 }) {
   const s = buildPdfStyles(getActiveTokens());
+  // A rendered cover (src/lib/covers/renderCover.ts) becomes a full-bleed
+  // page 1 when present -- guard on the file actually existing so a stale
+  // pointer never breaks PDF generation.
+  const coverPath =
+    asset.coverImageFileName && fs.existsSync(deliverablePath(asset.coverImageFileName))
+      ? deliverablePath(asset.coverImageFileName)
+      : null;
   return (
     <Document title={asset.title || "Digital Product"}>
+      {coverPath && (
+        <Page size="A4" style={{ padding: 0 }}>
+          {/* react-pdf Image, not an HTML img -- no alt prop exists */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <Image src={coverPath} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        </Page>
+      )}
       <Page size="A4" style={s.page}>
         <Text style={s.eyebrow}>{businessLabel(clientLabel)}</Text>
         <Text style={s.title}>{asset.title || "Digital Product"}</Text>

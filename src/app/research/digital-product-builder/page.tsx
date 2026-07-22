@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AlertCircle, BookOpen, Download, FileText, Play, Plus, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  BookOpen,
+  Download,
+  FileText,
+  Image as ImageIcon,
+  Play,
+  Plus,
+  Sparkles,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { DigitalProductSession } from "@/lib/types";
 import ChatMessages from "@/components/ChatMessages";
 import ChatInputRow from "@/components/ChatInputRow";
@@ -35,6 +46,17 @@ export default function DigitalProductBuilderPage() {
     autoResume: true,
   });
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  // Rendered cover file name per session (overlays asset.coverImageFileName
+  // once a fresh render returns), a cache-buster so a regenerated cover /
+  // PDF actually refreshes, and which row is currently rendering.
+  const [coverBySession, setCoverBySession] = useState<Record<string, string | null>>({});
+  const [coverBgBySession, setCoverBgBySession] = useState<Record<string, string | null>>({});
+  const [coverBustBySession, setCoverBustBySession] = useState<Record<string, number>>({});
+  const [coverBusyId, setCoverBusyId] = useState<string | null>(null);
+  const [aiOpenId, setAiOpenId] = useState<string | null>(null);
+  const [aiPromptBySession, setAiPromptBySession] = useState<Record<string, string>>({});
+  // Whether a fal.ai key is configured (gates the optional AI-background action).
+  const [falKeySet, setFalKeySet] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
@@ -49,6 +71,15 @@ export default function DigitalProductBuilderPage() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [messages.length, loading]);
+
+  useEffect(() => {
+    // Learn whether a fal.ai key is set so we only show the AI-background
+    // action when it can actually work.
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => setFalKeySet(Boolean(d.settings?._hasFalApiKey)))
+      .catch(() => {});
+  }, []);
 
   function handleStart() {
     send({ message: "" });
@@ -65,6 +96,35 @@ export default function DigitalProductBuilderPage() {
 
   function handleNewProduct() {
     startFresh();
+  }
+
+  async function postCover(
+    sessionId: string,
+    opts: { mode?: "render" | "ai" | "upload" | "remove-bg"; prompt?: string; file?: File } = {},
+  ) {
+    setCoverBusyId(sessionId);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.set("sessionId", sessionId);
+      if (opts.mode) form.set("mode", opts.mode);
+      if (opts.prompt) form.set("prompt", opts.prompt);
+      if (opts.file) form.set("file", opts.file);
+      const res = await fetch("/api/digital-product/cover", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not update the cover.");
+        return;
+      }
+      setCoverBySession((m) => ({ ...m, [sessionId]: data.coverImageFileName }));
+      setCoverBgBySession((m) => ({ ...m, [sessionId]: data.coverBackgroundFileName ?? null }));
+      setCoverBustBySession((m) => ({ ...m, [sessionId]: Date.now() }));
+      setAiOpenId(null);
+    } catch {
+      setError("Request failed — is the dev server running?");
+    } finally {
+      setCoverBusyId(null);
+    }
   }
 
   async function confirmDelete(id: string) {
@@ -248,36 +308,161 @@ export default function DigitalProductBuilderPage() {
                   </div>
                 </div>
               ) : (
-                <div
-                  key={s.deliverable!.fileName}
-                  className="flex items-center justify-between rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
-                >
-                  <span className="flex items-center gap-2 text-paper-dim">
-                    <FileText size={16} className="text-electric" />
-                    {s.deliverable!.title}
-                    <span className="text-paper-faint">
-                      — {s.clientLabel} · {s.asset.productType || "?"}
-                    </span>
-                  </span>
-                  <span className="flex shrink-0 items-center gap-2">
-                    <a
-                      href={`/api/digital-product/deliverables/${s.deliverable!.fileName}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                (() => {
+                  const cover =
+                    coverBySession[s.id] !== undefined
+                      ? coverBySession[s.id]
+                      : s.asset.coverImageFileName ?? null;
+                  const bg =
+                    coverBgBySession[s.id] !== undefined
+                      ? coverBgBySession[s.id]
+                      : s.asset.coverBackgroundFileName ?? null;
+                  const coverBust = coverBustBySession[s.id];
+                  const busy = coverBusyId === s.id;
+                  const isPdf = formatLabel(s.deliverable!.fileName) === "PDF";
+                  const viewHref = `/api/digital-product/deliverables/${s.deliverable!.fileName}${
+                    coverBust ? `?t=${coverBust}` : ""
+                  }`;
+                  return (
+                    <div
+                      key={s.deliverable!.fileName}
+                      className="rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
                     >
-                      <Download size={14} />
-                      {formatLabel(s.deliverable!.fileName) === "PDF" ? "View" : "Download"}
-                    </a>
-                    <button
-                      onClick={() => setDeletingId(s.id)}
-                      aria-label="Delete product"
-                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </span>
-                </div>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex min-w-0 items-center gap-2 text-paper-dim">
+                            <FileText size={16} className="shrink-0 text-electric" />
+                            <span className="truncate">{s.deliverable!.title}</span>
+                          </div>
+                          <div className="mt-0.5 truncate text-[12px] text-paper-faint">
+                            {s.clientLabel} · {s.asset.productType || "?"}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setDeletingId(s.id)}
+                          aria-label="Delete product"
+                          className="shrink-0 rounded-sm p-1.5 text-paper-faint hover:bg-ink-elevated hover:text-paper"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <button
+                          onClick={() => postCover(s.id, { mode: "render" })}
+                          disabled={busy}
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                        >
+                          <ImageIcon size={14} />
+                          {busy ? "Working…" : `${cover ? "Regenerate" : "Generate"} cover`}
+                        </button>
+                        {falKeySet && (
+                          <button
+                            onClick={() => setAiOpenId(aiOpenId === s.id ? null : s.id)}
+                            disabled={busy}
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                          >
+                            <Sparkles size={14} />
+                            AI background
+                          </button>
+                        )}
+                        <label
+                          className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
+                            busy ? "opacity-50" : ""
+                          }`}
+                        >
+                          <Upload size={14} />
+                          Upload background
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            className="hidden"
+                            disabled={busy}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) postCover(s.id, { mode: "upload", file: f });
+                              e.target.value = "";
+                            }}
+                          />
+                        </label>
+                        {bg && (
+                          <button
+                            onClick={() => postCover(s.id, { mode: "remove-bg" })}
+                            disabled={busy}
+                            className="label-mono flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-gold hover:underline disabled:opacity-50"
+                          >
+                            Remove background
+                          </button>
+                        )}
+                        {cover && (
+                          <a
+                            href={`/api/digital-product/deliverables/${cover}${
+                              coverBust ? `?t=${coverBust}` : ""
+                            }`}
+                            target="_blank"
+                            rel="noreferrer"
+                            download
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                          >
+                            <Download size={14} />
+                            Download cover
+                          </a>
+                        )}
+                        <a
+                          href={viewHref}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        >
+                          <Download size={14} />
+                          {isPdf ? "View" : "Download"}
+                        </a>
+                      </div>
+
+                      {aiOpenId === s.id && falKeySet && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <input
+                            type="text"
+                            value={aiPromptBySession[s.id] ?? ""}
+                            onChange={(e) =>
+                              setAiPromptBySession((m) => ({ ...m, [s.id]: e.target.value }))
+                            }
+                            placeholder="Optional: describe the background (e.g. 'warm sunrise gradient')"
+                            className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink-raised px-3 py-1.5 text-[12px] text-paper placeholder:text-paper-faint focus:border-electric focus:outline-none"
+                          />
+                          <button
+                            onClick={() =>
+                              postCover(s.id, { mode: "ai", prompt: aiPromptBySession[s.id] })
+                            }
+                            disabled={busy}
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                          >
+                            <Sparkles size={14} />
+                            {busy ? "Generating…" : "Generate background"}
+                          </button>
+                        </div>
+                      )}
+
+                      {cover && (
+                        <div className="mt-3 flex items-center gap-3">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`/api/digital-product/deliverables/${cover}${
+                              coverBust ? `?t=${coverBust}` : ""
+                            }`}
+                            alt="Cover"
+                            className="h-28 w-auto shrink-0 rounded-sm border border-line-strong"
+                          />
+                          <div className="text-[12px] text-paper-faint">
+                            {isPdf
+                              ? "Added as page 1 of the PDF."
+                              : "Standalone cover — download above."}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()
               ),
             )}
           </div>

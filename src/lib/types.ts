@@ -91,6 +91,10 @@ export interface Settings {
   gmailClientId?: string;
   gmailClientSecret?: string;
   gmailRefreshToken?: string;
+  // Optional fal.ai API key, used ONLY when the coach opts into an AI-generated
+  // background for a Digital Product cover (src/lib/covers/imageGen.ts).
+  // Pay-as-you-go on the coach's own account; everything else stays $0.
+  falApiKey?: string;
   // Set by the background inbox watcher (src/lib/inbox/watcher.ts) each
   // time it polls, independent of any user visiting /inbox.
   inboxLastCheckedAt?: string;
@@ -364,12 +368,29 @@ export interface AgentRunState {
 // repeatedly, so each run is its own short session tied to a client
 // (an onboarding session) rather than a multi-stage flow.
 
+// One slide of a carousel piece, extracted alongside finalText so the piece
+// can be rendered as on-brand slide images (see src/lib/slides/renderSlides.ts).
+export interface CarouselSlide {
+  headline?: string;
+  body?: string;
+}
+
+// How much on-image text a single-image post (IG image / LinkedIn post)
+// should carry when rendered. Chosen by the client during the chat brief;
+// the renderer honors it. Carousels ignore this.
+export type ImageCardStyle = "hook-cta" | "hook-intro" | "headline-only";
+
 export interface MessagingPiece {
   topic?: string;
   format?: string;
   platform?: string;
   cta?: string;
   finalText?: string;
+  // Present for carousel pieces (the draft split into ordered slides) and for
+  // single-image posts (exactly one slide: the short on-image text).
+  slides?: CarouselSlide[];
+  // Single-image posts only: which on-image text treatment the client picked.
+  imageCardStyle?: ImageCardStyle;
 }
 
 export interface MessagingSession extends AgentRunState {
@@ -384,6 +405,12 @@ export interface MessagingSession extends AgentRunState {
   piece: MessagingPiece;
   complete: boolean;
   deliverable?: DeliverableMeta;
+  // File names (under data/deliverables/) of rendered on-brand slide PNGs,
+  // in slide order, once the user has generated them for a carousel piece.
+  slideFiles?: string[];
+  // File name (under data/messaging-uploads/) of an uploaded photo the user
+  // wants used as the full-bleed background of the rendered slides. Optional.
+  slideImageFile?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -619,6 +646,13 @@ export interface DigitalProductAsset {
   targetPages?: number;
   outputFormat?: DigitalProductOutputFormat;
   sections?: DigitalProductSection[];
+  // Cover art (see src/lib/covers/renderCover.ts). The rendered cover PNG
+  // (under data/deliverables/) doubles as a standalone download and page 1 of
+  // the generated PDF. The optional background is an AI-generated or uploaded
+  // photo composited full-bleed behind the cover text (see data/cover-uploads/).
+  coverImageFileName?: string;
+  coverBackgroundFileName?: string;
+  coverBackgroundKind?: "ai" | "upload";
 }
 
 export interface DigitalProductSession extends AgentRunState {

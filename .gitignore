@@ -48,6 +48,8 @@ yarn-error.log*
 /data/hawk-uploads/
 /data/steward-uploads/
 /data/digital-product-uploads/
+/data/messaging-uploads/
+/data/cover-uploads/
 
 # typescript
 *.tsbuildinfo

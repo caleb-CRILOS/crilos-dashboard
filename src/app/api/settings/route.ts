@@ -13,11 +13,13 @@ function maskSecrets(settings: Settings) {
     skoolWebhookSecret: mask(settings.skoolWebhookSecret),
     gmailClientSecret: mask(settings.gmailClientSecret),
     gmailRefreshToken: undefined, // never sent to the client at all, not even masked
+    falApiKey: mask(settings.falApiKey),
     _hasGhlToken: Boolean(settings.ghlPrivateToken),
     _hasAnthropicKey: Boolean(settings.anthropicApiKey),
     _hasSkoolSecret: Boolean(settings.skoolWebhookSecret),
     _hasGmailClientSecret: Boolean(settings.gmailClientSecret),
     _gmailConnected: Boolean(settings.gmailRefreshToken),
+    _hasFalApiKey: Boolean(settings.falApiKey),
   };
 }
 
