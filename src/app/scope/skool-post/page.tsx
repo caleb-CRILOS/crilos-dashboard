@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AlertCircle, Check, ClipboardList, Copy, Play, Plus, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { SkoolPostSession } from "@/lib/types";
+import { copyText } from "@/lib/clipboard";
 import ChatMessages from "@/components/ChatMessages";
 import ChatInputRow from "@/components/ChatInputRow";
 import { useAgentChat } from "@/hooks/useAgentChat";
@@ -101,28 +102,7 @@ export default function SkoolPostPage() {
 
   async function copyToClipboard(text: string, key: string) {
     try {
-      // Try the modern Clipboard API first (works identically on Windows and
-      // macOS -- it's a browser API, not an OS shell-out). If it's missing,
-      // blocked by permissions policy, or the context isn't secure, fall
-      // back to the classic textarea + execCommand trick rather than giving
-      // up immediately.
-      try {
-        if (!navigator.clipboard || !window.isSecureContext) {
-          throw new Error("Clipboard API unavailable");
-        }
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(ta);
-        if (!ok) throw new Error("execCommand copy failed");
-      }
+      await copyText(text);
       setCopiedKey(key);
       setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 1500);
     } catch {

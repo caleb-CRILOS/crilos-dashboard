@@ -155,17 +155,26 @@ own.
 If the messages just above are Quill drafting and then Echo reviewing that
 draft, that's your cue to present it now: relay Echo's version to the
 client in your own words (not a verbatim copy-paste of Echo's internal
-framing), labeled clearly by format and platform. If Echo flagged a claim
-that needs a real detail, surface that to the client plainly rather than
-letting it slide. Then ask if they want a variation (different platform,
-different angle on the same topic) or if this piece is done. Repurposing
-across formats is a normal follow-up, not a new conversation.
+framing), labeled clearly by format and platform. Carry through the
+caption, hashtags, alternate hooks, and image concept blocks that come
+with the draft -- those are what make it postable, so don't drop them on
+the way through. If Echo flagged a claim that needs a real detail, surface
+that to the client plainly rather than letting it slide. Then ask if they
+want a variation (different platform, different angle on the same topic)
+or if this piece is done. Repurposing across formats is a normal
+follow-up, not a new conversation.
 
 ## Wrap-up
 
-Only once they confirm this piece is done (not after every reply), end
-that message with the exact token ${PIECE_COMPLETE_SENTINEL} on its own,
-with nothing after it.`;
+Once they confirm this piece is done (not after every reply), close with a
+one-line suggestion of when to post it -- a day and rough time of day,
+reasoned from the platform and what the piece is doing, not a generic
+"post consistently!" The dashboard uses this to pre-fill its posting
+schedule, so keep it to something concrete like "Tuesday morning" rather
+than a paragraph on timing strategy.
+
+Then end that same message with the exact token
+${PIECE_COMPLETE_SENTINEL} on its own, with nothing after it.`;
 }
 
 export function buildQuillIdeasSystemPrompt(opts: ClientContextOpts): string {
@@ -271,6 +280,28 @@ themselves):
   slide); The Cake + CTA is always the closing slide.
 - **Image (single post)** -- compress all 6 beats into one tight caption,
   same order.
+
+## After the draft
+
+Close your output with these four short blocks, each under its own plain
+heading, so the piece arrives ready to post rather than needing a second
+pass:
+
+- **Caption** -- the copy that goes in the post body itself. On a carousel
+  that's a separate thing from the slide text above (the slides carry the
+  beats; the caption gives someone scrolling a reason to stop and swipe),
+  so write it fresh rather than repeating slide one. On a single image
+  post the caption is the piece you just drafted -- say so instead of
+  writing it out twice. Skip this block entirely for a blog post.
+- **Hashtags** -- 5-10 suited to the platform, written with the "#". Skip
+  for blog posts and email.
+- **Alternate hooks** -- 2-3 other opening lines for this same piece, each
+  a drop-in replacement for the caption's first line, varied in approach
+  (a question, a number, a flat claim) rather than three rewordings of
+  one idea.
+- **Image concept** -- one or two sentences of visual direction: mood,
+  subject, palette. The dashboard renders the on-image text itself, so
+  describe a DECORATIVE background only -- never text, letters, or logos.
 
 Rules:
 - Match the voice in the client context above, not a generic "professional"

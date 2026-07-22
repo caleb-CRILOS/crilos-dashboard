@@ -1,20 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { format as formatDate, isBefore, parseISO, startOfDay } from "date-fns";
 import {
   AlertCircle,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Copy,
   Download,
   FileText,
   Image as ImageIcon,
   Megaphone,
   Play,
   Plus,
+  Sparkles,
   Trash2,
+  X,
 } from "lucide-react";
 import { MessagingSession } from "@/lib/types";
+import { copyText } from "@/lib/clipboard";
 import ChatMessages from "@/components/ChatMessages";
 import ChatInputRow from "@/components/ChatInputRow";
 import { useAgentChat } from "@/hooks/useAgentChat";
+
+// The caption a user actually pastes into the platform: the drafted caption
+// (falling back to the full piece, which IS the caption on a single-image
+// post) with the hashtags appended.
+function captionForCopy(s: MessagingSession): string {
+  const body = (s.piece.caption || s.piece.finalText || "").trim();
+  const tags = (s.piece.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+  return tags ? `${body}\n\n${tags}` : body;
+}
 
 export default function MessagingCreatorPage() {
   const {
@@ -47,7 +64,21 @@ export default function MessagingCreatorPage() {
   // thumbnail after an upload.
   const [imageBySession, setImageBySession] = useState<Record<string, string | null>>({});
   const [imageBustBySession, setImageBustBySession] = useState<Record<string, number>>({});
-  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  // Which card is busy attaching a background, and how -- the mode drives the
+  // button label ("Uploading…" vs "Generating…") without a second flag.
+  const [bgBusy, setBgBusy] = useState<{ id: string; mode: "ai" | "upload" } | null>(null);
+  // Art-direction prompt typed into a card; overrides piece.imageConcept.
+  const [aiPromptBySession, setAiPromptBySession] = useState<Record<string, string>>({});
+
+  // Copy-to-clipboard feedback, keyed per button so only the one clicked
+  // flips to a checkmark, and which card has its alternate hooks expanded.
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [openHooksId, setOpenHooksId] = useState<string | null>(null);
+
+  // Posting schedule: which card has its date picker open, and which is
+  // mid-request. The date itself lives on the session, not in local state.
+  const [schedulingId, setSchedulingId] = useState<string | null>(null);
+  const [scheduleBusyId, setScheduleBusyId] = useState<string | null>(null);
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
@@ -57,6 +88,11 @@ export default function MessagingCreatorPage() {
   const started = session !== null || loading;
   const messages = session?.messages ?? [];
   const deliverables = allSessions.filter((s) => s.deliverable);
+  // Soonest first, so the schedule panel reads as a plan rather than a list.
+  const scheduled = allSessions
+    .filter((s) => s.scheduledFor)
+    .sort((a, b) => a.scheduledFor!.localeCompare(b.scheduledFor!));
+  const today = startOfDay(new Date());
 
   async function generateSlides(sessionId: string) {
     setGeneratingId(sessionId);
@@ -78,22 +114,77 @@ export default function MessagingCreatorPage() {
     }
   }
 
-  async function uploadImage(sessionId: string, file: File) {
-    setUploadingId(sessionId);
+  // Attach a slide background, either from a picked file or generated from the
+  // piece's image concept. Both land on the same session field, so they share
+  // one request path and one busy flag.
+  async function attachBackground(
+    sessionId: string,
+    opts: { mode: "ai" | "upload"; file?: File; prompt?: string },
+  ) {
+    setBgBusy({ id: sessionId, mode: opts.mode });
     setSlidesError(null);
     try {
       const form = new FormData();
       form.set("sessionId", sessionId);
-      form.set("file", file);
+      form.set("mode", opts.mode);
+      if (opts.file) form.set("file", opts.file);
+      if (opts.prompt) form.set("prompt", opts.prompt);
       const res = await fetch("/api/messaging/slides/image", { method: "POST", body: form });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || "Could not attach that background");
       setImageBySession((m) => ({ ...m, [sessionId]: data.slideImageFile }));
       setImageBustBySession((m) => ({ ...m, [sessionId]: Date.now() }));
+      setAllSessions((prev) =>
+        prev.map((s) => (s.id === sessionId ? { ...s, slideImageKind: data.slideImageKind } : s)),
+      );
     } catch (e) {
-      setSlidesError(e instanceof Error ? e.message : "Upload failed");
+      setSlidesError(e instanceof Error ? e.message : "Could not attach that background");
     } finally {
-      setUploadingId(null);
+      setBgBusy(null);
+    }
+  }
+
+  async function copyToClipboard(text: string, key: string) {
+    if (!text.trim()) {
+      setSlidesError("There's nothing to copy on this piece.");
+      return;
+    }
+    try {
+      await copyText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 1500);
+    } catch {
+      setSlidesError("Couldn't copy to clipboard.");
+    }
+  }
+
+  // Set or clear the planned posting day. Persisted server-side, then mirrored
+  // into allSessions so the schedule panel updates without a refetch.
+  async function setSchedule(sessionId: string, scheduledFor: string | null) {
+    setScheduleBusyId(sessionId);
+    setSlidesError(null);
+    try {
+      const res = scheduledFor
+        ? await fetch("/api/messaging/schedule", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId, scheduledFor }),
+          })
+        : await fetch(`/api/messaging/schedule?sessionId=${encodeURIComponent(sessionId)}`, {
+            method: "DELETE",
+          });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not update the schedule");
+      setAllSessions((prev) =>
+        prev.map((s) =>
+          s.id === sessionId ? { ...s, scheduledFor: scheduledFor ?? undefined } : s,
+        ),
+      );
+      setSchedulingId(null);
+    } catch (e) {
+      setSlidesError(e instanceof Error ? e.message : "Could not update the schedule");
+    } finally {
+      setScheduleBusyId(null);
     }
   }
 
@@ -108,6 +199,9 @@ export default function MessagingCreatorPage() {
         throw new Error(data.error || "Could not remove image");
       }
       setImageBySession((m) => ({ ...m, [sessionId]: null }));
+      setAllSessions((prev) =>
+        prev.map((s) => (s.id === sessionId ? { ...s, slideImageKind: undefined } : s)),
+      );
     } catch (e) {
       setSlidesError(e instanceof Error ? e.message : "Could not remove image");
     }
@@ -189,7 +283,9 @@ export default function MessagingCreatorPage() {
         A conversation that greets you, proposes four content ideas from
         your content bible, then drafts whichever one you pick — IG image
         script, carousel script, video script, or blog post — in your own
-        voice.
+        voice. Every finished piece comes with a paste-ready caption,
+        hashtags, alternate hooks to test, an image concept you can render
+        into on-brand slides, and a day to post it.
       </p>
 
       {error && (
@@ -263,6 +359,47 @@ export default function MessagingCreatorPage() {
       )}
 
       <div className="mt-10">
+        <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          Posting schedule
+        </h2>
+        <p className="mb-3 mt-1 text-sm text-paper-dim">
+          Pieces you&apos;ve given a date, soonest first. Set one with Schedule on any
+          deliverable below.
+        </p>
+        {scheduled.length === 0 ? (
+          <div className="hud-panel stack p-8 text-center text-sm text-paper-faint">
+            Nothing scheduled yet.
+          </div>
+        ) : (
+          <div className="hud-panel stack space-y-1 p-3">
+            {scheduled.map((s) => {
+              const day = parseISO(s.scheduledFor!);
+              const overdue = isBefore(day, today);
+              return (
+                <div
+                  key={s.id}
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-line-strong bg-ink px-4 py-2.5 text-sm"
+                >
+                  <span className="label-mono w-24 shrink-0 text-[12px] text-electric">
+                    {formatDate(day, "EEE MMM d")}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-paper-dim">
+                    {s.piece.topic || s.deliverable?.title || "Untitled piece"}
+                  </span>
+                  <span className="shrink-0 text-[12px] text-paper-faint">
+                    {s.piece.format || "?"} / {s.piece.platform || "?"}
+                  </span>
+                  {overdue && (
+                    <span className="label-mono shrink-0 text-[11px] text-gold">Overdue</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-10">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
             Deliverables
@@ -306,6 +443,8 @@ export default function MessagingCreatorPage() {
                   ? imageBySession[s.id]
                   : s.slideImageFile ?? null;
               const imageBust = imageBustBySession[s.id];
+              const busyOnCard = bgBusy?.id === s.id;
+              const hooks = s.piece.hookVariants ?? [];
 
               if (deletingId === s.id) {
                 return (
@@ -316,7 +455,7 @@ export default function MessagingCreatorPage() {
                     <span className="text-paper-dim">
                       Delete &ldquo;{s.deliverable!.title}&rdquo;? The conversation, its
                       PDF{slides.length > 0 ? ", slides" : ""}{" "}
-                      and any uploaded image go too. This can&apos;t be undone.
+                      and any background image go too. This can&apos;t be undone.
                     </span>
                     <div className="flex shrink-0 items-center gap-2">
                       <button
@@ -369,11 +508,11 @@ export default function MessagingCreatorPage() {
                     {renderable && (
                       <label
                         className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
-                          uploadingId === s.id ? "opacity-50" : ""
+                          busyOnCard ? "opacity-50" : ""
                         }`}
                       >
                         <ImageIcon size={14} />
-                        {uploadingId === s.id
+                        {bgBusy?.id === s.id && bgBusy.mode === "upload"
                           ? "Uploading…"
                           : attachedImage
                             ? "Change image"
@@ -382,10 +521,10 @@ export default function MessagingCreatorPage() {
                           type="file"
                           accept="image/png,image/jpeg,image/webp"
                           className="hidden"
-                          disabled={uploadingId === s.id}
+                          disabled={busyOnCard}
                           onChange={(e) => {
                             const f = e.target.files?.[0];
-                            if (f) uploadImage(s.id, f);
+                            if (f) attachBackground(s.id, { mode: "upload", file: f });
                             e.target.value = "";
                           }}
                         />
@@ -412,6 +551,39 @@ export default function MessagingCreatorPage() {
                         Download image
                       </a>
                     )}
+                    <button
+                      onClick={() => copyToClipboard(captionForCopy(s), `caption-${s.id}`)}
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                    >
+                      {copiedKey === `caption-${s.id}` ? (
+                        <Check size={14} className="text-sage" />
+                      ) : (
+                        <Copy size={14} />
+                      )}
+                      {copiedKey === `caption-${s.id}` ? "Copied" : "Copy caption"}
+                    </button>
+                    {hooks.length > 0 && (
+                      <button
+                        onClick={() => setOpenHooksId((id) => (id === s.id ? null : s.id))}
+                        aria-expanded={openHooksId === s.id}
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      >
+                        <ChevronDown
+                          size={14}
+                          className={`transition-transform ${openHooksId === s.id ? "" : "-rotate-90"}`}
+                        />
+                        {hooks.length} hooks
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setSchedulingId((id) => (id === s.id ? null : s.id))}
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                    >
+                      <CalendarDays size={14} />
+                      {s.scheduledFor
+                        ? formatDate(parseISO(s.scheduledFor), "MMM d")
+                        : "Schedule"}
+                    </button>
                     <a
                       href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
                       target="_blank"
@@ -431,6 +603,88 @@ export default function MessagingCreatorPage() {
                     </button>
                   </div>
 
+                  {openHooksId === s.id && hooks.length > 0 && (
+                    <div className="mt-3 space-y-1.5 border-l-[3px] border-line-strong pl-3">
+                      <div className="label-mono text-[11px] text-paper-faint">
+                        Swap in for the caption&apos;s first line
+                      </div>
+                      {hooks.map((hook, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="flex-1 text-[13px] text-paper-dim">{hook}</span>
+                          <button
+                            onClick={() => copyToClipboard(hook, `hook-${s.id}-${i}`)}
+                            aria-label={`Copy hook ${i + 1}`}
+                            className="shrink-0 text-paper-faint hover:text-paper"
+                          >
+                            {copiedKey === `hook-${s.id}-${i}` ? (
+                              <Check size={14} className="text-sage" />
+                            ) : (
+                              <Copy size={14} />
+                            )}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {schedulingId === s.id && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2 border-l-[3px] border-electric bg-ink-raised px-3 py-2">
+                      <input
+                        type="date"
+                        defaultValue={s.scheduledFor ?? ""}
+                        disabled={scheduleBusyId === s.id}
+                        onChange={(e) => {
+                          if (e.target.value) setSchedule(s.id, e.target.value);
+                        }}
+                        className="rounded-sm border border-line-strong bg-ink px-2 py-1 font-mono text-[12px] text-paper disabled:opacity-50"
+                      />
+                      {s.piece.suggestedPostAt && !s.scheduledFor && (
+                        <span className="text-[12px] text-paper-faint">
+                          Atlas suggested {s.piece.suggestedPostAt}
+                        </span>
+                      )}
+                      {s.scheduledFor && (
+                        <button
+                          onClick={() => setSchedule(s.id, null)}
+                          disabled={scheduleBusyId === s.id}
+                          className="label-mono flex items-center gap-1 text-[11px] text-gold hover:underline disabled:opacity-50"
+                        >
+                          <X size={13} />
+                          Unschedule
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {renderable && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <input
+                        type="text"
+                        value={aiPromptBySession[s.id] ?? s.piece.imageConcept ?? ""}
+                        onChange={(e) =>
+                          setAiPromptBySession((m) => ({ ...m, [s.id]: e.target.value }))
+                        }
+                        placeholder="Describe the background image…"
+                        className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink px-2 py-1.5 text-[12px] text-paper placeholder:text-paper-faint"
+                      />
+                      <button
+                        onClick={() =>
+                          attachBackground(s.id, {
+                            mode: "ai",
+                            prompt: aiPromptBySession[s.id] ?? s.piece.imageConcept,
+                          })
+                        }
+                        disabled={busyOnCard}
+                        className="chip-accent flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                      >
+                        <Sparkles size={14} />
+                        {bgBusy?.id === s.id && bgBusy.mode === "ai"
+                          ? "Generating…"
+                          : "Generate background"}
+                      </button>
+                    </div>
+                  )}
+
                   {renderable && attachedImage && (
                     <div className="mt-3 flex items-center gap-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -442,7 +696,8 @@ export default function MessagingCreatorPage() {
                         className="h-16 w-16 shrink-0 rounded-sm border border-line-strong object-cover"
                       />
                       <div className="text-[12px] text-paper-faint">
-                        Used as the slide background — regenerate to apply.
+                        {s.slideImageKind === "ai" ? "Generated" : "Uploaded"} background —
+                        regenerate to apply.
                         <button
                           onClick={() => removeImage(s.id)}
                           className="ml-2 text-gold hover:underline"

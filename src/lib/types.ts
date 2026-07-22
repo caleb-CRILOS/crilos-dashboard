@@ -386,6 +386,21 @@ export interface MessagingPiece {
   platform?: string;
   cta?: string;
   finalText?: string;
+  // The post body the client actually pastes into the platform. Distinct from
+  // finalText: on a carousel, finalText is the whole 6-beat piece and `slides`
+  // carry the on-slide text, so the post itself would otherwise have no copy.
+  caption?: string;
+  // Platform-appropriate tags, stored WITHOUT the leading "#" -- the UI and
+  // PDF add it, so the raw values stay easy to re-use elsewhere.
+  hashtags?: string[];
+  // 2-3 alternate opening lines for the same piece, for A/B testing a hook.
+  hookVariants?: string[];
+  // A short visual direction for the piece (mood, subject, palette). Seeds the
+  // fal.ai background prompt -- see src/lib/covers/imageGen.ts.
+  imageConcept?: string;
+  // Plain-language posting recommendation from the conversation, e.g.
+  // "Tuesday morning". Pre-fills the schedule picker; not itself a date.
+  suggestedPostAt?: string;
   // Present for carousel pieces (the draft split into ordered slides) and for
   // single-image posts (exactly one slide: the short on-image text).
   slides?: CarouselSlide[];
@@ -408,9 +423,16 @@ export interface MessagingSession extends AgentRunState {
   // File names (under data/deliverables/) of rendered on-brand slide PNGs,
   // in slide order, once the user has generated them for a carousel piece.
   slideFiles?: string[];
-  // File name (under data/messaging-uploads/) of an uploaded photo the user
-  // wants used as the full-bleed background of the rendered slides. Optional.
+  // File name (under data/messaging-uploads/) of the photo used as the
+  // full-bleed background of the rendered slides. Optional. Either uploaded by
+  // the user or generated from the piece's imageConcept -- slideImageKind says
+  // which, so the UI can label the thumbnail.
   slideImageFile?: string;
+  slideImageKind?: "ai" | "upload";
+  // The day this piece is planned to go out (YYYY-MM-DD), set by the user in
+  // the Posting schedule panel. Local only -- deliberately not synced to
+  // Google Calendar.
+  scheduledFor?: string;
   createdAt: string;
   updatedAt: string;
 }
