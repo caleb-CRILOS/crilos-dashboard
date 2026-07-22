@@ -9,6 +9,7 @@ import {
   Megaphone,
   Play,
   Plus,
+  Trash2,
 } from "lucide-react";
 import { MessagingSession } from "@/lib/types";
 import ChatMessages from "@/components/ChatMessages";
@@ -16,11 +17,21 @@ import ChatInputRow from "@/components/ChatInputRow";
 import { useAgentChat } from "@/hooks/useAgentChat";
 
 export default function MessagingCreatorPage() {
-  const { session, allSessions, input, setInput, loading, error, send, startFresh } =
-    useAgentChat<MessagingSession>({
-      endpoint: "/api/messaging/message",
-      autoResume: true,
-    });
+  const {
+    session,
+    allSessions,
+    setAllSessions,
+    input,
+    setInput,
+    loading,
+    error,
+    setError,
+    send,
+    startFresh,
+  } = useAgentChat<MessagingSession>({
+    endpoint: "/api/messaging/message",
+    autoResume: true,
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Rendered slide file names per session (overlays the persisted
@@ -38,8 +49,14 @@ export default function MessagingCreatorPage() {
   const [imageBustBySession, setImageBustBySession] = useState<Record<string, number>>({});
   const [uploadingId, setUploadingId] = useState<string | null>(null);
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+  const [deleteAllBusy, setDeleteAllBusy] = useState(false);
+
   const started = session !== null || loading;
   const messages = session?.messages ?? [];
+  const deliverables = allSessions.filter((s) => s.deliverable);
 
   async function generateSlides(sessionId: string) {
     setGeneratingId(sessionId);
@@ -93,6 +110,50 @@ export default function MessagingCreatorPage() {
       setImageBySession((m) => ({ ...m, [sessionId]: null }));
     } catch (e) {
       setSlidesError(e instanceof Error ? e.message : "Could not remove image");
+    }
+  }
+
+  async function confirmDelete(id: string) {
+    setDeleteBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/messaging/message?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not delete this piece.");
+        return;
+      }
+      setAllSessions((prev) => prev.filter((s) => s.id !== id));
+      // A piece stays open in the chat above after it completes, so deleting
+      // its card would otherwise leave a transcript that no longer exists.
+      if (session?.id === id) startFresh();
+    } catch {
+      setError("Request failed — is the dev server running?");
+    } finally {
+      setDeleteBusy(false);
+      setDeletingId(null);
+    }
+  }
+
+  async function handleDeleteAll() {
+    setDeleteAllBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/messaging/message?all=true", { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not delete pieces.");
+        return;
+      }
+      setAllSessions((prev) => prev.filter((s) => !s.complete));
+      if (session?.complete) startFresh();
+    } catch {
+      setError("Request failed — is the dev server running?");
+    } finally {
+      setDeleteAllBusy(false);
+      setConfirmDeleteAll(false);
     }
   }
 
@@ -202,9 +263,20 @@ export default function MessagingCreatorPage() {
       )}
 
       <div className="mt-10">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
-          Deliverables
-        </h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+            Deliverables
+          </h2>
+          {deliverables.length > 0 && (
+            <button
+              onClick={() => setConfirmDeleteAll(true)}
+              className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:border-gold hover:text-gold"
+            >
+              <Trash2 size={14} />
+              Delete all pieces
+            </button>
+          )}
+        </div>
         <p className="mb-3 text-sm text-paper-dim">
           Finished pieces from every Messaging Creator session, newest last.
         </p>
@@ -214,166 +286,236 @@ export default function MessagingCreatorPage() {
             {slidesError}
           </div>
         )}
-        {allSessions.every((s) => !s.deliverable) ? (
+        {deliverables.length === 0 ? (
           <div className="hud-panel stack p-8 text-center text-sm text-paper-faint">
             No pieces drafted yet. They&apos;ll show up here once a
             conversation wraps up.
           </div>
         ) : (
           <div className="hud-panel stack space-y-2 p-3">
-            {allSessions
-              .filter((s) => s.deliverable)
-              .map((s) => {
-                const format = (s.piece.format || "").toLowerCase();
-                const isCarousel = format.includes("carousel");
-                const isImage = !isCarousel && format.includes("image");
-                const renderable = isCarousel || isImage;
-                const noun = isCarousel ? "slides" : "image";
-                const slides = slidesBySession[s.id] ?? s.slideFiles ?? [];
-                const bust = bustBySession[s.id];
-                const attachedImage =
-                  imageBySession[s.id] !== undefined
-                    ? imageBySession[s.id]
-                    : s.slideImageFile ?? null;
-                const imageBust = imageBustBySession[s.id];
+            {deliverables.map((s) => {
+              const format = (s.piece.format || "").toLowerCase();
+              const isCarousel = format.includes("carousel");
+              const isImage = !isCarousel && format.includes("image");
+              const renderable = isCarousel || isImage;
+              const noun = isCarousel ? "slides" : "image";
+              const slides = slidesBySession[s.id] ?? s.slideFiles ?? [];
+              const bust = bustBySession[s.id];
+              const attachedImage =
+                imageBySession[s.id] !== undefined
+                  ? imageBySession[s.id]
+                  : s.slideImageFile ?? null;
+              const imageBust = imageBustBySession[s.id];
+
+              if (deletingId === s.id) {
                 return (
                   <div
                     key={s.deliverable!.fileName}
-                    className="rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gold/60 bg-ink-raised px-4 py-3 text-sm"
                   >
-                    <div className="min-w-0">
-                      <div className="flex min-w-0 items-center gap-2 text-paper-dim">
-                        <FileText size={16} className="shrink-0 text-electric" />
-                        <span className="truncate">{s.deliverable!.title}</span>
-                      </div>
-                      <div className="mt-0.5 truncate text-[12px] text-paper-faint">
-                        {s.clientLabel} · {s.piece.format || "?"} / {s.piece.platform || "?"}
-                      </div>
+                    <span className="text-paper-dim">
+                      Delete &ldquo;{s.deliverable!.title}&rdquo;? The conversation, its
+                      PDF{slides.length > 0 ? ", slides" : ""}{" "}
+                      and any uploaded image go too. This can&apos;t be undone.
+                    </span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <button
+                        onClick={() => confirmDelete(s.id)}
+                        disabled={deleteBusy}
+                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                      >
+                        {deleteBusy ? "Deleting…" : "Delete"}
+                      </button>
+                      <button
+                        onClick={() => setDeletingId(null)}
+                        disabled={deleteBusy}
+                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
                     </div>
+                  </div>
+                );
+              }
 
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      {renderable && (
-                        <button
-                          onClick={() => generateSlides(s.id)}
-                          disabled={generatingId === s.id}
-                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
-                        >
-                          <ImageIcon size={14} />
-                          {generatingId === s.id
-                            ? "Rendering…"
-                            : `${slides.length ? "Regenerate" : "Generate"} ${noun}`}
-                        </button>
-                      )}
-                      {renderable && (
-                        <label
-                          className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
-                            uploadingId === s.id ? "opacity-50" : ""
-                          }`}
-                        >
-                          <ImageIcon size={14} />
-                          {uploadingId === s.id
-                            ? "Uploading…"
-                            : attachedImage
-                              ? "Change image"
-                              : "Add image"}
-                          <input
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp"
-                            className="hidden"
-                            disabled={uploadingId === s.id}
-                            onChange={(e) => {
-                              const f = e.target.files?.[0];
-                              if (f) uploadImage(s.id, f);
-                              e.target.value = "";
-                            }}
-                          />
-                        </label>
-                      )}
-                      {slides.length > 1 && (
-                        <a
-                          href={`/api/messaging/slides/zip?sessionId=${s.id}`}
-                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
-                        >
-                          <Download size={14} />
-                          All slides (.zip)
-                        </a>
-                      )}
-                      {slides.length === 1 && (
-                        <a
-                          href={`/api/messaging/deliverables/${slides[0]}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          download
-                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
-                        >
-                          <Download size={14} />
-                          Download image
-                        </a>
-                      )}
+              return (
+                <div
+                  key={s.deliverable!.fileName}
+                  className="rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
+                >
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-2 text-paper-dim">
+                      <FileText size={16} className="shrink-0 text-electric" />
+                      <span className="truncate">{s.deliverable!.title}</span>
+                    </div>
+                    <div className="mt-0.5 truncate text-[12px] text-paper-faint">
+                      {s.clientLabel} · {s.piece.format || "?"} / {s.piece.platform || "?"}
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {renderable && (
+                      <button
+                        onClick={() => generateSlides(s.id)}
+                        disabled={generatingId === s.id}
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                      >
+                        <ImageIcon size={14} />
+                        {generatingId === s.id
+                          ? "Rendering…"
+                          : `${slides.length ? "Regenerate" : "Generate"} ${noun}`}
+                      </button>
+                    )}
+                    {renderable && (
+                      <label
+                        className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
+                          uploadingId === s.id ? "opacity-50" : ""
+                        }`}
+                      >
+                        <ImageIcon size={14} />
+                        {uploadingId === s.id
+                          ? "Uploading…"
+                          : attachedImage
+                            ? "Change image"
+                            : "Add image"}
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          className="hidden"
+                          disabled={uploadingId === s.id}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0];
+                            if (f) uploadImage(s.id, f);
+                            e.target.value = "";
+                          }}
+                        />
+                      </label>
+                    )}
+                    {slides.length > 1 && (
                       <a
-                        href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
-                        target="_blank"
-                        rel="noreferrer"
+                        href={`/api/messaging/slides/zip?sessionId=${s.id}`}
                         className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
                       >
                         <Download size={14} />
-                        View PDF
+                        All slides (.zip)
                       </a>
-                    </div>
-
-                    {renderable && attachedImage && (
-                      <div className="mt-3 flex items-center gap-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`/api/messaging/slides/image?sessionId=${s.id}${
-                            imageBust ? `&t=${imageBust}` : ""
-                          }`}
-                          alt="Slide background"
-                          className="h-16 w-16 shrink-0 rounded-sm border border-line-strong object-cover"
-                        />
-                        <div className="text-[12px] text-paper-faint">
-                          Used as the slide background — regenerate to apply.
-                          <button
-                            onClick={() => removeImage(s.id)}
-                            className="ml-2 text-gold hover:underline"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
                     )}
-
-                    {slides.length > 0 && (
-                      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                        {slides.map((f, i) => {
-                          const src = `/api/messaging/deliverables/${f}${bust ? `?t=${bust}` : ""}`;
-                          return (
-                            <a
-                              key={f}
-                              href={`/api/messaging/deliverables/${f}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              download
-                              className="shrink-0"
-                              title={`Slide ${i + 1} — open / download`}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={src}
-                                alt={`Slide ${i + 1}`}
-                                className="h-44 w-auto border border-line-strong"
-                              />
-                            </a>
-                          );
-                        })}
-                      </div>
+                    {slides.length === 1 && (
+                      <a
+                        href={`/api/messaging/deliverables/${slides[0]}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        download
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      >
+                        <Download size={14} />
+                        Download image
+                      </a>
                     )}
+                    <a
+                      href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                    >
+                      <Download size={14} />
+                      View PDF
+                    </a>
+                    <button
+                      onClick={() => setDeletingId(s.id)}
+                      aria-label="Delete piece"
+                      className="chip-accent ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
                   </div>
-                );
-              })}
+
+                  {renderable && attachedImage && (
+                    <div className="mt-3 flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/api/messaging/slides/image?sessionId=${s.id}${
+                          imageBust ? `&t=${imageBust}` : ""
+                        }`}
+                        alt="Slide background"
+                        className="h-16 w-16 shrink-0 rounded-sm border border-line-strong object-cover"
+                      />
+                      <div className="text-[12px] text-paper-faint">
+                        Used as the slide background — regenerate to apply.
+                        <button
+                          onClick={() => removeImage(s.id)}
+                          className="ml-2 text-gold hover:underline"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {slides.length > 0 && (
+                    <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                      {slides.map((f, i) => {
+                        const src = `/api/messaging/deliverables/${f}${bust ? `?t=${bust}` : ""}`;
+                        return (
+                          <a
+                            key={f}
+                            href={`/api/messaging/deliverables/${f}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            download
+                            className="shrink-0"
+                            title={`Slide ${i + 1} — open / download`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={src}
+                              alt={`Slide ${i + 1}`}
+                              className="h-44 w-auto border border-line-strong"
+                            />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
+
+      {confirmDeleteAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4">
+          <div className="hud-panel stack w-full max-w-sm border-l-[3px] border-gold p-5">
+            <h3 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+              Delete all pieces?
+            </h3>
+            <p className="mt-2 text-sm text-paper-dim">
+              This permanently deletes all {deliverables.length} finished piece
+              {deliverables.length === 1 ? "" : "s"}{" "}
+              — conversations, PDFs, slides and uploaded images. Anything still
+              in progress is kept. This can&apos;t be undone.
+            </p>
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button
+                onClick={() => setConfirmDeleteAll(false)}
+                disabled={deleteAllBusy}
+                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAll}
+                disabled={deleteAllBusy}
+                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+              >
+                {deleteAllBusy ? "Deleting…" : "Delete all"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

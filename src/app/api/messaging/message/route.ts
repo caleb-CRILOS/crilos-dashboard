@@ -14,7 +14,8 @@ import {
 } from "@/lib/messaging/prompts";
 import { messagingPieceSchema } from "@/lib/messaging/schemas";
 import { extractStructured, sendTurn } from "@/lib/claude-cli";
-import { generateMessagingDeliverable } from "@/lib/pdf/generate";
+import { deleteDeliverableFile, generateMessagingDeliverable } from "@/lib/pdf/generate";
+import { deleteUpload } from "@/lib/messaging/slideUploads";
 import { pickDefaultOnboardingSession } from "@/lib/agentContext";
 
 const KICKOFF_MESSAGE = "Begin the conversation now, following your instructions.";
@@ -217,4 +218,49 @@ export async function GET(req: Request) {
     return NextResponse.json({ session: withResolvedRunState(session) });
   }
   return NextResponse.json({ sessions: db.data.messagingSessions.map(withResolvedRunState) });
+}
+
+// A messaging session owns files in two places: the PDF and any rendered
+// slide PNGs sit in data/deliverables/, while an uploaded slide background
+// lives in data/messaging-uploads/. Only what slideFiles still lists gets
+// cleaned up -- a re-render into fewer slides already orphans the extras.
+function cleanupSessionFiles(s: MessagingSession) {
+  if (s.deliverable?.fileName) deleteDeliverableFile(s.deliverable.fileName);
+  for (const f of s.slideFiles ?? []) deleteDeliverableFile(f);
+  if (s.slideImageFile) deleteUpload(s.slideImageFile);
+}
+
+export async function DELETE(req: Request) {
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
+  const all = url.searchParams.get("all") === "true";
+
+  if (all) {
+    // "all" clears finished pieces and leaves anything still in progress
+    // alone, same semantics as Digital Product's delete-all. The array swap
+    // goes through mutateDb so it can't clobber a concurrent turn; the disk
+    // cleanup happens after, outside the lock.
+    const toDelete = await mutateDb((data) => {
+      const removed = data.messagingSessions.filter((s) => s.complete);
+      data.messagingSessions = data.messagingSessions.filter((s) => !s.complete);
+      return removed;
+    });
+    for (const s of toDelete) cleanupSessionFiles(s);
+    return NextResponse.json({ ok: true, deleted: toDelete.length });
+  }
+
+  if (!id) {
+    return NextResponse.json({ error: "A session id is required." }, { status: 400 });
+  }
+  const removed = await mutateDb((data) => {
+    const index = data.messagingSessions.findIndex((s) => s.id === id);
+    if (index === -1) return undefined;
+    const [session] = data.messagingSessions.splice(index, 1);
+    return session;
+  });
+  if (!removed) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  cleanupSessionFiles(removed);
+  return NextResponse.json({ ok: true });
 }
