@@ -5,13 +5,14 @@
 // pre-branding look.
 //
 // Fonts: @react-pdf/renderer can only use fonts it has registered
-// (Helvetica is built in). When the brand kit has cached a real font file
-// for the brand's typeface (see branding/googleFonts.ts), registerFont
-// below registers it and styles use that family; otherwise fonts stay
-// Helvetica, exactly as before this feature existed.
+// (Helvetica is built in). Precedence: a brand kit's cached font file (see
+// branding/googleFonts.ts) wins; otherwise the bundled Inter (registered by
+// ensureInterDefault below) is the default, matching the app UI; if even that
+// asset is missing, styles fall back to Helvetica so a PDF still renders.
 
 import { Font, StyleSheet } from "@react-pdf/renderer";
 import fs from "fs";
+import path from "path";
 import { BrandTokens, BrandFontFile } from "../types";
 import { DEFAULT_TOKENS } from "../branding/standard";
 import { brandingPath } from "../branding/storage";
@@ -34,6 +35,36 @@ export type PdfStyles = ReturnType<typeof buildPdfStyles>;
 // this process, keyed by the cached regular-file name -- registering the
 // same family twice is wasted work, not an error, but this avoids it.
 const registeredFontFiles = new Set<string>();
+
+// The bundled Inter (reused from the slides renderer's font dir) is the
+// default deliverable typeface, matching the app UI. Registered once per
+// process. Returns "Inter" on success, or "Helvetica" if the asset is
+// missing/unreadable so a PDF never fails to render over a font.
+const INTER_FONT_DIR = path.join(process.cwd(), "src", "lib", "slides", "fonts");
+let interRegistered: boolean | null = null;
+function ensureInterDefault(): string {
+  if (interRegistered === null) {
+    try {
+      const regular = path.join(INTER_FONT_DIR, "inter-latin-400-normal.woff");
+      const bold = path.join(INTER_FONT_DIR, "inter-latin-700-normal.woff");
+      if (!fs.existsSync(regular) || !fs.existsSync(bold)) {
+        interRegistered = false;
+      } else {
+        Font.register({
+          family: "Inter",
+          fonts: [
+            { src: regular, fontWeight: "normal" },
+            { src: bold, fontWeight: "bold" },
+          ],
+        });
+        interRegistered = true;
+      }
+    } catch {
+      interRegistered = false;
+    }
+  }
+  return interRegistered ? "Inter" : "Helvetica";
+}
 
 // Registers a cached brand font with react-pdf, returning the family name
 // to use in styles. Falls back to `fallbackFamily` (a react-pdf built-in)
@@ -73,8 +104,17 @@ export function buildPdfStyles(tokens?: BrandTokens) {
     line: tokens?.line || BRAND.line,
     electric: tokens?.primary || BRAND.electric,
   };
-  const bodyFamily = registerFont(tokens?.bodyFont, "Helvetica");
-  const headingFamily = registerFont(tokens?.headingFont, "Helvetica-Bold");
+  // Default to bundled Inter. When Inter registered, the heading also uses
+  // "Inter" and gets its weight from fontWeight:"bold" (a real bold face is
+  // registered). Only when Inter is unavailable do we fall back to the
+  // built-in "Helvetica" / "Helvetica-Bold" pair (Helvetica-Bold is its own
+  // font name, not a weight variant -- see headingFontWeight in makeStyles).
+  const interDefault = ensureInterDefault();
+  const bodyFamily = registerFont(tokens?.bodyFont, interDefault);
+  const headingFamily = registerFont(
+    tokens?.headingFont,
+    interDefault === "Inter" ? "Inter" : "Helvetica-Bold",
+  );
   return makeStyles(brand, bodyFamily, headingFamily);
 }
 

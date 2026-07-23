@@ -35,8 +35,11 @@ export const DEFAULT_TOKENS: ResolvedBrandTokens = {
   paper: "#ffffff",
   muted: "#4a5567",
   line: "#e4e9f0",
-  fontFamily: "Helvetica, Arial, sans-serif",
-  headingFontFamily: "Helvetica, Arial, sans-serif",
+  // Inter leads the stack to match the app UI. PDFs embed it (see
+  // pdf/styles.ts). Word docs and HTML emails can't embed a font, so a reader
+  // without Inter installed falls back gracefully to Helvetica/Arial.
+  fontFamily: "Inter, Helvetica, Arial, sans-serif",
+  headingFontFamily: "Inter, Helvetica, Arial, sans-serif",
 };
 
 const DB_PATH = path.join(process.cwd(), "data", "db.json");
