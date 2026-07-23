@@ -329,7 +329,7 @@ export default function MessagingCreatorPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Atlas"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 
@@ -640,7 +640,7 @@ export default function MessagingCreatorPage() {
                       />
                       {s.piece.suggestedPostAt && !s.scheduledFor && (
                         <span className="text-[13px] text-paper-faint">
-                          Atlas suggested {s.piece.suggestedPostAt}
+                          CRILOS suggested {s.piece.suggestedPostAt}
                         </span>
                       )}
                       {s.scheduledFor && (

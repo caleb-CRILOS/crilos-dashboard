@@ -87,8 +87,8 @@ export default function DocumentOpsPage() {
       </h1>
       <p className="mt-1 text-sm text-paper-dim">
         Onboarding docs, session notes, SOPs, recap emails, and program
-        materials — drafted by Steward, matching any existing material on
-        file, with a voice-QA pass from Echo on anything client-facing.
+        materials — drafted to match any existing material on
+        file, with a voice-QA pass on anything client-facing.
       </p>
 
       {error && (
@@ -132,7 +132,7 @@ export default function DocumentOpsPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Atlas"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 

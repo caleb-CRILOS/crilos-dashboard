@@ -136,10 +136,10 @@ export default function SkoolPostPage() {
           Skool Posts
         </h1>
         <p className="mt-1 text-sm text-paper-dim">
-          Need something to post in your Skool community? Tell Quill what&apos;s
+          Need something to post in your Skool community? Tell CRILOS what&apos;s
           going on — a win to celebrate, a goal for the week, a poll, a hot
-          take, whatever — and it&apos;ll draft it, Echo checks it sounds like
-          you, and you get a finished post ready to paste in.
+          take, whatever — and it&apos;ll draft it, check it sounds like
+          you, and hand you a finished post ready to paste in.
         </p>
 
         {error && (
@@ -199,7 +199,7 @@ export default function SkoolPostPage() {
                 messages={messages}
                 loading={loading}
                 loadingLabel="Thinking…"
-                personaName="Quill"
+                personaName="CRILOS"
                 scrollRef={scrollRef}
               />
 

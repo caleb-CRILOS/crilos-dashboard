@@ -2,7 +2,6 @@ import { getDb } from "@/lib/db";
 import { computeLeadHealth, leadHealthCounts } from "@/lib/dm2close/health";
 import { computeDiscoveryCallHealth } from "@/lib/hawk/discoveryCallHealth";
 import DmHealthBadge from "@/components/DmHealthBadge";
-import AgentDirectory from "@/components/AgentDirectory";
 import ActivityFeed, { ActivityItem } from "@/components/ActivityFeed";
 import CalendarPanel from "@/components/CalendarPanel";
 import { Search, PenLine, Send, ClipboardList } from "lucide-react";
@@ -45,7 +44,7 @@ function buildActivityFeed(
   const items: FeedSeed[] = [
     ...sage.map((s) => ({
       id: s.id,
-      agentName: "Sage",
+      agentName: "Research",
       icon: Search,
       label: s.clientLabel,
       summary: `Researching "${s.topic}"`,
@@ -53,7 +52,7 @@ function buildActivityFeed(
     })),
     ...messaging.map((s) => ({
       id: s.id,
-      agentName: "Quill",
+      agentName: "Content",
       icon: PenLine,
       label: s.clientLabel,
       summary: `${s.complete ? "Drafted" : "Drafting"} "${s.piece.topic || s.piece.format || "a piece"}"`,
@@ -61,7 +60,7 @@ function buildActivityFeed(
     })),
     ...hawk.map((s) => ({
       id: s.id,
-      agentName: "Hawk",
+      agentName: "Outreach",
       icon: Send,
       label: s.clientLabel,
       summary: `${s.complete ? "Drafted" : "Drafting"} ${s.asset.assetType || "an asset"}`,
@@ -69,7 +68,7 @@ function buildActivityFeed(
     })),
     ...steward.map((s) => ({
       id: s.id,
-      agentName: "Steward",
+      agentName: "Documents",
       icon: ClipboardList,
       label: s.clientLabel,
       summary: `${s.complete ? "Drafted" : "Drafting"} ${s.asset.docType || "a doc"}`,
@@ -77,7 +76,7 @@ function buildActivityFeed(
     })),
     ...dms.map((s) => ({
       id: s.id,
-      agentName: "Quill",
+      agentName: "DM",
       icon: PenLine,
       label: s.leadLabel,
       summary: `${s.currentStage ?? "Active"} stage${forClient(s.clientLabel)}`,
@@ -232,13 +231,6 @@ export default async function OverviewPage() {
           Recent activity
         </h2>
         <ActivityFeed items={activityItems} />
-      </div>
-
-      <div className="mt-10">
-        <h2 className="mb-3 font-display text-lg font-semibold text-paper">
-          Agent directory
-        </h2>
-        <AgentDirectory />
       </div>
     </div>
   );

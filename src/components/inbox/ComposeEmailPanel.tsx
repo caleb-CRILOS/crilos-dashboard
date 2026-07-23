@@ -120,8 +120,8 @@ export default function ComposeEmailPanel() {
         <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
           <Mail size={20} className="text-paper-faint" />
           <p className="text-sm text-paper-dim">
-            Tell Atlas who you&apos;re emailing and what it&apos;s about — Quill
-            will draft it, Echo will review it, and you&apos;ll get a chance to
+            Tell CRILOS who you&apos;re emailing and what it&apos;s about — it&apos;ll
+            draft it, review it, and you&apos;ll get a chance to
             edit before it&apos;s saved.
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function ComposeEmailPanel() {
           messages={messages}
           loading={loading}
           loadingLabel="Thinking…"
-          personaName="Atlas"
+          personaName="CRILOS"
           scrollRef={scrollRef}
         />
       )}

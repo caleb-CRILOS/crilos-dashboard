@@ -79,7 +79,7 @@ export default function BrandKitPage() {
       </div>
       <h1 className="bleed-type text-paper">Branding</h1>
       <p className="mt-1 text-sm text-paper-dim">
-        Upload a brand image — a logo, screenshot, or moodboard. Atlas turns it
+        Upload a brand image — a logo, screenshot, or moodboard. CRILOS turns it
         into a design system (an HTML reference + a design doc) that becomes the
         standard every document and HTML output in CRILOS follows.
       </p>
@@ -122,7 +122,7 @@ export default function BrandKitPage() {
         </div>
         {generating && (
           <p className="mt-4 text-xs text-paper-dim">
-            Atlas is studying the image and building your design system. This can
+            CRILOS is studying the image and building your design system. This can
             take a minute or two — keep this tab open.
           </p>
         )}

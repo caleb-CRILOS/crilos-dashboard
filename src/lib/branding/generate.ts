@@ -18,7 +18,7 @@ import { BrandTokens, BrandingStandard } from "../types";
 import { saveBinary, saveText } from "./storage";
 import { resolveBrandFont } from "./googleFonts";
 
-const BRAND_KIT_SYSTEM_PROMPT = `You are Atlas, a brand and design-systems partner for a coach or
+const BRAND_KIT_SYSTEM_PROMPT = `You are CRILOS, a brand and design-systems partner for a coach or
 consultant. You are given a single brand image (a logo, screenshot,
 moodboard, or brand asset). Your job is to reverse-engineer a reusable
 design system from it: the color palette, typography feel, spacing, and

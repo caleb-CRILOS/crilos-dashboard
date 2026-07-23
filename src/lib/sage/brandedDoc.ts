@@ -16,7 +16,7 @@ import { ChatMessage, DeliverableMeta, SageSession } from "../types";
 import { deliverablePath } from "../pdf/generate";
 import { getActiveBranding } from "../branding/standard";
 
-const SYSTEM_PROMPT = `You are Atlas, a documents and design partner for a coach or consultant.
+const SYSTEM_PROMPT = `You are CRILOS, a documents and design partner for a coach or consultant.
 You turn a market-research conversation into a single, polished, READABLE
 research document as a self-contained HTML file.
 

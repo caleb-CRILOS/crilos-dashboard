@@ -267,7 +267,7 @@ export default function Dm2ClosePage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Quill"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 

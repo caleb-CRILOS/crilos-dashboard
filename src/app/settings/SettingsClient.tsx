@@ -197,8 +197,8 @@ export default function SettingsClient({
 
       <Section title="Claude model">
         <p className="text-xs text-paper-faint">
-          Which model powers the agent chats (Sage, Quill, Hawk, Steward, DM
-          2 Close, onboarding, and the rest of the Build tools).
+          Which model powers the CRILOS chats (Research, Content, Outreach,
+          Documents, DM 2 Close, onboarding, and the rest of the Build tools).
         </p>
         <select
           value={model}

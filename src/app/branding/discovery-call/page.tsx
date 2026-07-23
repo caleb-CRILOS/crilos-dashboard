@@ -146,10 +146,10 @@ export default function DiscoveryCallPage() {
       </div>
       <h1 className="bleed-type text-paper">Discovery Call</h1>
       <p className="mt-1 text-sm text-paper-dim">
-        Start a new lead, tell Atlas what you know about the upcoming call
+        Start a new lead, tell CRILOS what you know about the upcoming call
         (or attach a document), and get a Discovery Call Prep Sheet — recommended
-        questions organized into a logical call flow, drafted by Hawk and
-        voice-checked by Echo.
+        questions organized into a logical call flow, drafted and
+        voice-checked.
       </p>
 
       {error && (
@@ -324,7 +324,7 @@ export default function DiscoveryCallPage() {
               messages={messages}
               loading={loading}
               loadingLabel="Thinking…"
-              personaName="Atlas"
+              personaName="CRILOS"
               scrollRef={scrollRef}
               uploadsBasePath="/api/hawk/uploads"
             />
@@ -334,7 +334,7 @@ export default function DiscoveryCallPage() {
               onChange={setInput}
               onSend={handleSend}
               disabled={loading}
-              placeholder="Tell Atlas what you know about this call..."
+              placeholder="Tell CRILOS what you know about this call..."
               attachedFile={attachedFile}
               onFileSelect={setAttachedFile}
               onClearFile={() => setAttachedFile(null)}

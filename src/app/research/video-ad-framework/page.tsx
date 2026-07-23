@@ -117,7 +117,7 @@ export default function VideoAdFrameworkPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Atlas"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 

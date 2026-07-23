@@ -29,7 +29,7 @@ const STAGE_INTROS: Record<
   setup: {
     title: "Start the setup interview",
     description:
-      "Atlas will walk through the client's identity, business, offer, voice, and goals — about 5 minutes.",
+      "CRILOS will walk through the client's identity, business, offer, voice, and goals — about 5 minutes.",
     button: "Start Setup Interview",
   },
   ica: {
@@ -247,9 +247,9 @@ export default function OnboardingPage() {
         Onboarding
       </h1>
       <p className="mt-1 text-sm text-paper-dim">
-        A conversation with Atlas — the same setup interview, ICA, and
-        Content Guide process as the CRILOS CLI product, run one stage at
-        a time. Come back any time to update a stage as the business changes.
+        A conversation with CRILOS — the same setup interview, ICA, and
+        Content Guide process, run one stage at a time. Come back any time
+        to update a stage as the business changes.
       </p>
 
       {!picked ? (
@@ -370,7 +370,7 @@ export default function OnboardingPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Atlas"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 
@@ -407,7 +407,7 @@ export default function OnboardingPage() {
 
       {isComplete(session, stage) && (
         <p className="mt-2 text-[13px] text-paper-faint">
-          A redo keeps everything already captured — Atlas walks you through
+          A redo keeps everything already captured — CRILOS walks you through
           what&apos;s on file and asks what&apos;s changed.
         </p>
       )}

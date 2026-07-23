@@ -377,7 +377,7 @@ export default function MarketResearchPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Researching…"
-            personaName="Sage"
+            personaName="CRILOS"
             scrollRef={scrollRef}
           />
 
@@ -386,7 +386,7 @@ export default function MarketResearchPage() {
             onChange={setInput}
             onSend={handleSend}
             disabled={loading}
-            placeholder="Ask Sage anything about this topic..."
+            placeholder="Ask CRILOS anything about this topic..."
           />
         </div>
       )}

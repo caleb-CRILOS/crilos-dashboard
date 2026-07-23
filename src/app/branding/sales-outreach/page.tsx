@@ -100,7 +100,7 @@ export default function SalesOutreachPage() {
       </h1>
       <p className="mt-1 text-sm text-paper-dim">
         Outreach copy, proposals, discovery-call prep, and follow-up
-        sequences — drafted by Hawk, voice-checked by Echo, with pricing
+        sequences — drafted and voice-checked, with pricing
         and guarantee language kept consistent with the client&apos;s own
         offer.
       </p>
@@ -146,7 +146,7 @@ export default function SalesOutreachPage() {
             messages={messages}
             loading={loading}
             loadingLabel="Thinking…"
-            personaName="Atlas"
+            personaName="CRILOS"
             scrollRef={scrollRef}
             uploadsBasePath="/api/hawk/uploads"
           />

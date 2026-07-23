@@ -15,7 +15,7 @@ export default function ActivityFeed({ items }: { items: ActivityItem[] }) {
   if (items.length === 0) {
     return (
       <div className="hud-panel stack p-8 text-center text-sm text-paper-dim">
-        No agent activity yet.
+        No activity yet.
       </div>
     );
   }

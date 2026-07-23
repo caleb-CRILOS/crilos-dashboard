@@ -156,8 +156,8 @@ export default function InboxPage() {
                 Inbox
               </h1>
               <p className="mt-1 text-sm text-paper-dim">
-                Unread mail, summarized — Steward drafts a reply in the
-                matched client&apos;s voice, Echo reviews it. Nothing sends;
+                Unread mail, summarized — CRILOS drafts a reply in the
+                matched client&apos;s voice and reviews it. Nothing sends;
                 review and save as a Gmail draft yourself.
               </p>
               {watcherStatus?.enabled && (

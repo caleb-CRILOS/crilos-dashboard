@@ -83,7 +83,7 @@ export default function ClientAssetsPanel({ clientId }: { clientId: string }) {
         </label>
       </div>
       <p className="mb-3 text-sm text-paper-faint">
-        Existing SOPs, session notes, or program material — Steward matches
+        Existing SOPs, session notes, or program material — CRILOS matches
         their structure instead of inventing a new format each time.
       </p>
 
