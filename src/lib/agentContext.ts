@@ -4,7 +4,7 @@
 // (see extractStructured in claude-cli.ts for the established pattern), so
 // every agent needs this context re-embedded rather than inherited.
 
-import { ContentBible, IcaProfile, OnboardingProfile, OnboardingSession, VoiceProfile } from "./types";
+import { ContentGuide, IcaProfile, OnboardingProfile, OnboardingSession, VoiceProfile } from "./types";
 import { brandingContextBlock } from "./branding/standard";
 
 // No client picker in these tools' UIs -- always draft against whichever
@@ -17,7 +17,7 @@ export function pickDefaultOnboardingSession(
   if (withIdentity.length === 0) return undefined;
 
   function rank(s: OnboardingSession): number {
-    if (s.contentBibleComplete) return 3;
+    if (s.contentGuideComplete) return 3;
     if (s.icaComplete) return 2;
     if (s.setupComplete) return 1;
     return 0;
@@ -49,10 +49,10 @@ export function buildClientContextBlock(opts: {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
   noClientMessage: string;
 }): string {
-  const { profile, voice, ica, contentBible, noClientMessage } = opts;
+  const { profile, voice, ica, contentGuide, noClientMessage } = opts;
   const hasClient = !!(profile && Object.keys(profile).length > 0);
 
   // The active branding standard (if any) is appended to every agent's
@@ -78,14 +78,14 @@ ICA vertical: ${fieldOrNone(ica?.vertical)}, ideal result: ${fieldOrNone(ica?.id
 ICA pain points: ${fieldOrNone(ica?.painPoints)}
 Most common objection: ${fieldOrNone(ica?.icaObjection)}
 
-Content bible goals/mechanisms:
+Content guide goals/mechanisms:
 ${
-  contentBible?.goals && contentBible.goals.length > 0
-    ? contentBible.goals
+  contentGuide?.goals && contentGuide.goals.length > 0
+    ? contentGuide.goals
         .map((g, i) => `${i + 1}. Goal: ${g.goal} -- Mechanism: ${g.mechanism} -- Solves: ${g.problem}`)
         .join("\n")
     : "(not captured yet)"
 }
-Voice of the customer quotes: ${fieldOrNone(contentBible?.voc)}
-Methodology name: ${fieldOrNone(contentBible?.methodologyName)}`);
+Voice of the customer quotes: ${fieldOrNone(contentGuide?.voc)}
+Methodology name: ${fieldOrNone(contentGuide?.methodologyName)}`);
 }

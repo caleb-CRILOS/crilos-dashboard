@@ -1,7 +1,7 @@
 // System prompts driving the Messaging Creator chat. Adapted from the
 // client's own CRILOS CLI product (its Messaging Creator skill plus the
 // Quill and Echo agents) for a chat context driven by a spawned
-// Claude Code CLI process: no file reads for voice/ICA/content bible (that
+// Claude Code CLI process: no file reads for voice/ICA/content guide (that
 // data is pulled from the linked onboarding session and embedded directly
 // in each agent's system prompt), no status-log step.
 //
@@ -13,7 +13,7 @@
 // drafts, Echo reviews Quill's draft in apply mode, then Atlas presents
 // Echo's version to the client. The client only ever sees Atlas.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_CONTENT_PARTNER_TONE } from "../agents/atlasPersona";
 
@@ -39,7 +39,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 export function buildMessagingSystemPrompt(opts: ClientContextOpts): string {
@@ -47,7 +47,7 @@ export function buildMessagingSystemPrompt(opts: ClientContextOpts): string {
     ...opts,
     noClientMessage: `No onboarding data is linked to this conversation yet. Say so plainly up
 front -- tell them you can still draft something from whatever they tell
-you right now, but a completed Onboarding (especially the Content Bible)
+you right now, but a completed Onboarding (especially the Content Guide)
 will make future pieces sharper and more grounded in their actual
 audience/offer. Then proceed with whatever they share in this chat.`,
   });
@@ -135,7 +135,7 @@ this order: Problem-Aware (the hook), Symptoms, Unique POV, Pillars of the
 Process, Objection Handling, The Cake. For each beat, ask for their actual
 words or detail -- this is their content, not a prompt for you to riff on.
 If they don't have something for a given beat, ask whether to skip it
-(Quill will draft that one instead, from the content bible/ICA context) or
+(Quill will draft that one instead, from the content guide/ICA context) or
 come back to it later; don't force an answer out of them. Still get
 Format, Platform, and the CTA from them the same as the standard brief --
 those aren't beats, but Quill needs them.
@@ -199,8 +199,8 @@ piece would actually say -- not a topic label, not a category name.
 
 ${
   opts.profile && Object.keys(opts.profile).length > 0
-    ? `Ground them in the content bible above (goals/mechanisms, VOC quotes)
-if it has real content, or the ICA/profile above if the content bible is
+    ? `Ground them in the content guide above (goals/mechanisms, VOC quotes)
+if it has real content, or the ICA/profile above if the content guide is
 still thin.`
     : `There's no client data on file, so pull from whatever's been shared in
 the conversation so far, or offer generic starting angles and say
@@ -242,13 +242,13 @@ Read the conversation above for the brief Atlas gathered. Two shapes are
 possible:
 - **Standard brief** -- topic/angle, format, platform, any grounding
   detail, and the client's CTA. Draft each beat from this brief plus the
-  content bible/ICA context above.
+  content guide/ICA context above.
 - **Step-by-step brief** -- Atlas's handoff message will say so plainly.
   The client dictated their own content for most or all of the 6 beats.
   For any beat they supplied, their words and details are the source of
   truth -- shape them into the beat's structure and rhythm, but don't
   replace their content with your own invented version or flatten their
-  phrasing into generic copy. Only draft a beat from context/content bible
+  phrasing into generic copy. Only draft a beat from context/content guide
   yourself if the client explicitly skipped it.
 
 Either way, draft the piece now, following this exact 6-part structure,

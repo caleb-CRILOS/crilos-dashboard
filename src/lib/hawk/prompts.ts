@@ -5,7 +5,7 @@
 // Quill. See that file for the full rationale on simulating this as
 // separate resumed Claude CLI calls rather than true Task-tool subagents.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_CONTENT_PARTNER_TONE } from "../agents/atlasPersona";
 
@@ -16,7 +16,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 export function buildHawkOrchestratorSystemPrompt(opts: ClientContextOpts): string {

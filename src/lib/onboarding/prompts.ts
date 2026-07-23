@@ -1,11 +1,11 @@
 // System prompts driving the onboarding chat. Adapted from the client's own
-// CRILOS CLI product (its setup / ICA / content-bible skills) for a chat
+// CRILOS CLI product (its setup / ICA / content-guide skills) for a chat
 // context driven by a spawned Claude Code CLI process rather than file
 // writes: no file writes (use the
 // STAGE_COMPLETE sentinel instead), no subagent delegation (Echo's logic is
 // folded inline), no PDF/status-log steps.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { fieldOrNone } from "../agentContext";
 import { ATLAS_INTERVIEW_TONE } from "../agents/atlasPersona";
 
@@ -193,7 +193,7 @@ ${
   revising
     ? `tell them their setup is updated, and flag plainly that anything they
 changed here (business, offer, voice) may mean their Ideal Client Avatar and
-Content Bible are now built on older answers and worth a look.`
+Content Guide are now built on older answers and worth a look.`
     : `tell them setup is complete and they can move on to defining their Ideal
 Client Avatar whenever they're ready.`
 } End that message with the exact
@@ -300,16 +300,16 @@ and content work. End that message with the exact token
 ${STAGE_COMPLETE_SENTINEL} on its own, with nothing after it.`;
 }
 
-export function buildContentBibleSystemPrompt(
+export function buildContentGuideSystemPrompt(
   profile: OnboardingProfile,
   voice: VoiceProfile,
   ica: IcaProfile,
-  // Present only when redoing this stage -- the bible already mapped.
-  revising?: ContentBible,
+  // Present only when redoing this stage -- the guide already mapped.
+  revising?: ContentGuide,
 ): string {
   return `${SHARED_TONE}
 
-You are running the Content Bible interview — the final onboarding stage.
+You are running the Content Guide interview — the final onboarding stage.
 This maps the client's full ecosystem journey: the goals/milestones that
 move a lead to a client, and the steps/mechanisms used to hit each one.
 

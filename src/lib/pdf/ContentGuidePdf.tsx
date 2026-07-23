@@ -1,17 +1,17 @@
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import {
-  ContentBible,
-  ContentBibleGoalRow,
-  ContentBibleStepRow,
+  ContentGuide,
+  ContentGuideGoalRow,
+  ContentGuideStepRow,
   OnboardingProfile,
 } from "../types";
 import { buildPdfStyles, PdfStyles } from "./styles";
 import { getActiveTokens } from "../branding/standard";
 import { businessLabel } from "./documentIdentity";
 
-function GoalTable({ goals, s }: { goals: ContentBibleGoalRow[]; s: PdfStyles }) {
+function GoalTable({ goals, s }: { goals: ContentGuideGoalRow[]; s: PdfStyles }) {
   if (!goals || goals.length === 0) return null;
-  const columns: [string, keyof ContentBibleGoalRow][] = [
+  const columns: [string, keyof ContentGuideGoalRow][] = [
     ["Goal / Milestone", "goal"],
     ["Mechanism", "mechanism"],
     ["Problem Solved", "problem"],
@@ -39,7 +39,7 @@ function GoalTable({ goals, s }: { goals: ContentBibleGoalRow[]; s: PdfStyles })
   );
 }
 
-function StepTable({ steps, s }: { steps: ContentBibleStepRow[] | undefined; s: PdfStyles }) {
+function StepTable({ steps, s }: { steps: ContentGuideStepRow[] | undefined; s: PdfStyles }) {
   if (!steps || steps.length === 0) return null;
   const columns: [string, "step" | "problem" | "resource"][] = [
     ["Step", "step"],
@@ -68,39 +68,39 @@ function StepTable({ steps, s }: { steps: ContentBibleStepRow[] | undefined; s: 
   );
 }
 
-export default function ContentBiblePdf({
+export default function ContentGuidePdf({
   profile,
-  contentBible,
+  contentGuide,
 }: {
   profile: OnboardingProfile;
-  contentBible: ContentBible;
+  contentGuide: ContentGuide;
 }) {
   const s = buildPdfStyles(getActiveTokens());
-  const goals = contentBible.goals ?? [];
-  const steps = contentBible.steps ?? [];
+  const goals = contentGuide.goals ?? [];
+  const steps = contentGuide.steps ?? [];
 
   return (
-    <Document title="Content Bible">
+    <Document title="Content Guide">
       <Page size="A4" style={s.page} wrap>
         <Text style={s.eyebrow}>{businessLabel(profile.businessName)}</Text>
         <Text style={s.title}>
-          Content Bible{contentBible.methodologyName ? ` — ${contentBible.methodologyName}` : ""}
+          Content Guide{contentGuide.methodologyName ? ` — ${contentGuide.methodologyName}` : ""}
         </Text>
         <Text style={s.subtitle}>{profile.businessName || "Client business"}</Text>
 
         <Text style={s.sectionTitle}>The Overall Journey</Text>
-        <Text style={s.paragraph}>{contentBible.overallAim || "Not captured"}</Text>
+        <Text style={s.paragraph}>{contentGuide.overallAim || "Not captured"}</Text>
         <GoalTable goals={goals} s={s} />
-        {contentBible.objections && (
+        {contentGuide.objections && (
           <>
             <Text style={s.fieldLabel}>Common objections</Text>
-            <Text style={s.fieldValue}>{contentBible.objections}</Text>
+            <Text style={s.fieldValue}>{contentGuide.objections}</Text>
           </>
         )}
-        {contentBible.voc && (
+        {contentGuide.voc && (
           <>
             <Text style={s.fieldLabel}>Voice of the Customer</Text>
-            <Text style={s.fieldValue}>{contentBible.voc}</Text>
+            <Text style={s.fieldValue}>{contentGuide.voc}</Text>
           </>
         )}
 

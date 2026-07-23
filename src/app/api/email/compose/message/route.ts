@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     profile: onboardingSession?.profile,
     voice: onboardingSession?.voice,
     ica: onboardingSession?.ica,
-    contentBible: onboardingSession?.contentBible,
+    contentGuide: onboardingSession?.contentGuide,
   };
 
   const knownContacts = db.data.clients

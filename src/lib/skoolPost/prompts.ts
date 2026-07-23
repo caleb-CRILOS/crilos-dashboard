@@ -13,7 +13,7 @@
 // voice-QA "apply mode" (preserve content, flag conflicting claims, say so
 // plainly if the voice profile is still blank).
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 
 // Quill emits this once the brief for a chosen format is complete (or a
@@ -31,7 +31,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 const FORMAT_LIST = `1. **Celebration** -- shout out a member's win.
@@ -50,7 +50,7 @@ export function buildQuillSystemPrompt(opts: ClientContextOpts): string {
     ...opts,
     noClientMessage: `No onboarding data is linked to this conversation yet. Say so plainly up
 front -- tell them you can still draft something from whatever they tell
-you right now, but a completed Onboarding (especially the Content Bible)
+you right now, but a completed Onboarding (especially the Content Guide)
 will make future posts sharper and more grounded in their actual
 audience/voice. Then proceed with whatever they share in this chat.`,
   });

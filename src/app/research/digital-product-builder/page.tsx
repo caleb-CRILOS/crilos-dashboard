@@ -175,7 +175,7 @@ export default function DigitalProductBuilderPage() {
       </div>
       <h1 className="bleed-type text-paper">Digital Product Builder</h1>
       <p className="mt-1 text-sm text-paper-dim">
-        A conversation with Quill that turns your content bible into a
+        A conversation with Quill that turns your content guide into a
         finished digital product — an ebook, workbook, checklist, whatever
         fits — grounded in your actual goals and the resources already on
         file. Echo reviews it before you get a branded Word or PDF file.
@@ -194,7 +194,7 @@ export default function DigitalProductBuilderPage() {
             Start a new digital product
           </h2>
           <p className="mt-2 max-w-sm text-sm text-paper-dim">
-            Quill will pitch four ideas grounded in your content bible, then
+            Quill will pitch four ideas grounded in your content guide, then
             walk through a brief, an outline you can revise, and a full
             draft — reviewed by Echo before it&apos;s finished.
           </p>

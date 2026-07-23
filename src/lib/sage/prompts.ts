@@ -6,14 +6,14 @@
 // would just be overhead (same reasoning DM 2 Close already used to skip
 // the relay for Quill). Sage is the visible persona directly.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 
 type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 export function buildSageSystemPrompt(opts: ClientContextOpts): string {

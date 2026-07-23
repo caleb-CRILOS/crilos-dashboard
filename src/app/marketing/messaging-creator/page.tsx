@@ -281,7 +281,7 @@ export default function MessagingCreatorPage() {
       </h1>
       <p className="mt-1 text-sm text-paper-dim">
         A conversation that greets you, proposes four content ideas from
-        your content bible, then drafts whichever one you pick — IG image
+        your content guide, then drafts whichever one you pick — IG image
         script, carousel script, video script, or blog post — in your own
         voice. Every finished piece comes with a paste-ready caption,
         hashtags, alternate hooks to test, an image concept you can render

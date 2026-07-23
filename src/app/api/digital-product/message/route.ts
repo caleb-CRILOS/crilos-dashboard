@@ -125,7 +125,7 @@ export async function POST(req: Request) {
 
     // Single-user tool -- no client picker. Always resolves to the one
     // onboarding profile on file so Quill/Echo draft against a real voice
-    // profile + content bible instead of a blank one.
+    // profile + content guide instead of a blank one.
     if (isRunning(session)) {
       return {
         kind: "error",
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
       profile: onboarding?.profile,
       voice: onboarding?.voice,
       ica: onboarding?.ica,
-      contentBible: onboarding?.contentBible,
+      contentGuide: onboarding?.contentGuide,
     };
 
     return {

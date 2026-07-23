@@ -21,7 +21,7 @@ needs get more specific.
   sources. Nothing is hardcoded; the app starts completely empty, and it
   fills in as you onboard and connect real data.
 - **Onboarding** — a guided chat that builds your business profile, voice
-  profile, ideal-client-avatar, and content bible, generating a PDF at each
+  profile, ideal-client-avatar, and content guide, generating a PDF at each
   stage.
 - **Build tools** — a suite of Claude-powered work assets orchestrated by
   Atlas: Sage (research), Quill (messaging/copy), Hawk (sales outreach),

@@ -69,7 +69,7 @@ export const icaSchema = {
   required: [],
 };
 
-export const contentBibleSchema = {
+export const contentGuideSchema = {
   type: "object",
   properties: {
     overallAim: { type: "string" },

@@ -42,7 +42,7 @@ export async function POST(
     profile: onboardingSession?.profile,
     voice: onboardingSession?.voice,
     ica: onboardingSession?.ica,
-    contentBible: onboardingSession?.contentBible,
+    contentGuide: onboardingSession?.contentGuide,
   };
 
   let summary: string;

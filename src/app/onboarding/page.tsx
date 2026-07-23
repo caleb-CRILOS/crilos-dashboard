@@ -19,7 +19,7 @@ import ChatInputRow from "@/components/ChatInputRow";
 const STAGES: { key: OnboardingStage; label: string }[] = [
   { key: "setup", label: "Setup Interview" },
   { key: "ica", label: "Ideal Client Avatar" },
-  { key: "contentBible", label: "Content Bible" },
+  { key: "contentGuide", label: "Content Guide" },
 ];
 
 const STAGE_INTROS: Record<
@@ -38,11 +38,11 @@ const STAGE_INTROS: Record<
       "A short interview to build a demographic and behavioral profile of this client's ideal customer.",
     button: "Start ICA Interview",
   },
-  contentBible: {
-    title: "Map the Content Bible",
+  contentGuide: {
+    title: "Map the Content Guide",
     description:
       "The final stage — mapping the full journey from lead to client, goal by goal.",
-    button: "Start Content Bible Interview",
+    button: "Start Content Guide Interview",
   },
 };
 
@@ -50,14 +50,14 @@ function messagesFor(session: OnboardingSession | null, stage: OnboardingStage):
   if (!session) return [];
   if (stage === "setup") return session.setupMessages;
   if (stage === "ica") return session.icaMessages;
-  return session.contentBibleMessages;
+  return session.contentGuideMessages;
 }
 
 function isComplete(session: OnboardingSession | null, stage: OnboardingStage): boolean {
   if (!session) return false;
   if (stage === "setup") return session.setupComplete;
   if (stage === "ica") return session.icaComplete;
-  return session.contentBibleComplete;
+  return session.contentGuideComplete;
 }
 
 // Which earlier stage, if any, has been completed more recently than this one
@@ -73,7 +73,7 @@ function builtOnOlder(
   const mine = at?.[stage];
   if (!at || !mine) return null;
   if (stage === "ica") return at.setup && at.setup > mine ? "setup" : null;
-  if (stage === "contentBible") {
+  if (stage === "contentGuide") {
     if (at.setup && at.setup > mine) return "setup";
     if (at.ica && at.ica > mine) return "ica";
   }
@@ -85,7 +85,7 @@ function builtOnOlder(
 function initialStageFor(s: OnboardingSession): OnboardingStage {
   if (!s.setupComplete) return "setup";
   if (!s.icaComplete) return "ica";
-  if (!s.contentBibleComplete) return "contentBible";
+  if (!s.contentGuideComplete) return "contentGuide";
   return "setup";
 }
 
@@ -96,7 +96,7 @@ function sessionLabel(s: OnboardingSession): string {
 const STAGE_LABEL: Record<OnboardingStage, string> = {
   setup: "Setup Interview",
   ica: "Ideal Client Avatar",
-  contentBible: "Content Bible",
+  contentGuide: "Content Guide",
 };
 
 export default function OnboardingPage() {
@@ -248,7 +248,7 @@ export default function OnboardingPage() {
       </h1>
       <p className="mt-1 text-sm text-paper-dim">
         A conversation with Atlas — the same setup interview, ICA, and
-        Content Bible process as the CRILOS CLI product, run one stage at
+        Content Guide process as the CRILOS CLI product, run one stage at
         a time. Come back any time to update a stage as the business changes.
       </p>
 
@@ -412,10 +412,10 @@ export default function OnboardingPage() {
         </p>
       )}
 
-      {isComplete(session, "contentBible") && (
+      {isComplete(session, "contentGuide") && (
         <div className="mt-4 border-l-[3px] border-sage bg-ink-raised px-4 py-3 text-sm text-sage">
           Onboarding complete — {session?.profile.businessName || session?.profile.name || "this client"}&apos;s
-          profile, voice, ICA, and content bible are all captured.
+          profile, voice, ICA, and content guide are all captured.
         </div>
       )}
         </>

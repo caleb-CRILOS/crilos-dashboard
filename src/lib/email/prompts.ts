@@ -8,7 +8,7 @@
 // (recap emails/client-facing ops are literally in its remit), so its
 // existing Echo QA prompt already fits without changes.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_INTERVIEW_TONE } from "../agents/atlasPersona";
 
@@ -16,7 +16,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 export function buildEmailSummarySystemPrompt(): string {

@@ -15,7 +15,7 @@ import {
 } from "../types";
 import RecommendationPdf from "./RecommendationPdf";
 import IcaPdf from "./IcaPdf";
-import ContentBiblePdf from "./ContentBiblePdf";
+import ContentGuidePdf from "./ContentGuidePdf";
 import MessagingPiecePdf from "./MessagingPiecePdf";
 import VideoAdScriptPdf from "./VideoAdScriptPdf";
 
@@ -31,7 +31,7 @@ function lastAssistantMessage(messages: ChatMessage[]): string {
 const TITLES: Record<OnboardingStage, string> = {
   setup: "Your First Recommendation",
   ica: "Ideal Client Avatar",
-  contentBible: "Content Bible",
+  contentGuide: "Content Guide",
 };
 
 export async function generateDeliverable(
@@ -47,7 +47,7 @@ export async function generateDeliverable(
   } else if (stage === "ica") {
     doc = IcaPdf({ profile: session.profile, ica: session.ica });
   } else {
-    doc = ContentBiblePdf({ profile: session.profile, contentBible: session.contentBible });
+    doc = ContentGuidePdf({ profile: session.profile, contentGuide: session.contentGuide });
   }
 
   const buffer = await renderToBuffer(doc);

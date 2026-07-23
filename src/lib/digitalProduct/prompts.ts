@@ -3,14 +3,14 @@
 // same pattern as Skool Posts (src/lib/skoolPost/prompts.ts): the client
 // talks to Quill directly, Echo still reviews the full draft in apply mode
 // before Quill presents it. No direct source in the client's CRILOS CLI
-// product covers turning a content bible into a standalone
+// product covers turning a content guide into a standalone
 // digital product, so these are new prompts -- same situation Skool Posts
 // itself was in. What carries over from the Quill and Echo agents: match the
 // client's voice rather than a generic tone, never invent claims/numbers/
 // testimonials, and Echo's voice-QA "apply mode" (preserve content, flag
 // conflicting claims, say so plainly if the voice profile is still blank).
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 
 // Quill emits this once the outline has been confirmed instead of drafting
@@ -27,17 +27,17 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
-// The content bible's per-goal step tables each have a "resource" column
-// (see ContentBibleStepRow in ../types) -- a practical resource named for
+// The content guide's per-goal step tables each have a "resource" column
+// (see ContentGuideStepRow in ../types) -- a practical resource named for
 // that step. That column is what the client means by "Resources": it isn't
 // surfaced by the shared buildClientContextBlock (which only pulls
 // goals/voc/methodologyName), so this tool adds it as its own block.
-function resourcesBlock(contentBible?: ContentBible): string {
-  const goals = contentBible?.goals ?? [];
-  const steps = contentBible?.steps ?? [];
+function resourcesBlock(contentGuide?: ContentGuide): string {
+  const goals = contentGuide?.goals ?? [];
+  const steps = contentGuide?.steps ?? [];
   if (goals.length === 0 || steps.length === 0) return "";
 
   const lines: string[] = [];
@@ -49,7 +49,7 @@ function resourcesBlock(contentBible?: ContentBible): string {
   });
   if (lines.length === 0) return "";
 
-  return `\n\n## Resources already on file (from the content bible's step tables)\n\n${lines.join("\n")}`;
+  return `\n\n## Resources already on file (from the content guide's step tables)\n\n${lines.join("\n")}`;
 }
 
 export function buildQuillSystemPrompt(opts: ClientContextOpts): string {
@@ -57,11 +57,11 @@ export function buildQuillSystemPrompt(opts: ClientContextOpts): string {
     ...opts,
     noClientMessage: `No onboarding data is linked to this conversation yet. Say so plainly up
 front -- tell them you can still build a product from whatever they tell
-you right now, but a completed Onboarding (especially the Content Bible)
+you right now, but a completed Onboarding (especially the Content Guide)
 will make the ideas sharper and more grounded in their actual audience.
 Then proceed with generic, clearly-labeled-as-generic ideas.`,
   });
-  const resources = resourcesBlock(opts.contentBible);
+  const resources = resourcesBlock(opts.contentGuide);
 
   return `You are Quill, the Content Agent inside CRILOS, working directly with
 the client to turn what they already have into a finished digital product
@@ -142,7 +142,7 @@ export function buildQuillDraftSystemPrompt(opts: ClientContextOpts): string {
 whatever brief and outline are in the conversation above, and note in your
 framing that a completed Onboarding would sharpen future products.`,
   });
-  const resources = resourcesBlock(opts.contentBible);
+  const resources = resourcesBlock(opts.contentGuide);
 
   return `You are Quill, the Content Agent inside CRILOS. You don't talk to the
 client directly in this turn -- your output gets reviewed by Echo and then

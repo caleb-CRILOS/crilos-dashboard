@@ -8,7 +8,7 @@
 // full rationale). A DM thread never "completes" -- there's no wrap-up
 // sentinel; the coach just keeps feeding in the lead's latest reply.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 
 // Quill emits this once the user has confirmed which of the 5 stages
@@ -21,7 +21,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 // Each stage's assessment cue (what a conversation in that stage looks
@@ -172,7 +172,7 @@ approach and don't skip ahead.
 
 Ground the reply in the actual conversation above (what the lead has
 said, what's already been shared) and, where relevant, the client context
-above (voice, ICA pain points, content bible) -- not generic filler.
+above (voice, ICA pain points, content guide) -- not generic filler.
 
 Rules:
 - Match the voice in the client context above, not a generic "professional"

@@ -6,7 +6,7 @@
 // only docs (SOPs, session notes) don't, per Steward's own rule that
 // internal material isn't voice-sensitive.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_CONTENT_PARTNER_TONE } from "../agents/atlasPersona";
 
@@ -17,7 +17,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 function existingMaterialBlock(existingMaterial: { title: string; content: string }[]): string {

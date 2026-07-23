@@ -11,8 +11,8 @@ import mammoth from "mammoth";
 // the whole command line (all args combined) past ~32,767 chars with
 // ENAMETOOLONG -- confirmed by measurement, not just theory: a real
 // system prompt for one populated client profile (--system-prompt, built
-// from their full content bible/ICA/voice) alone measured 12,295 chars,
-// and other clients' content bibles can run longer. Cap the attachment's
+// from their full content guide/ICA/voice) alone measured 12,295 chars,
+// and other clients' content guides can run longer. Cap the attachment's
 // share well under that so a large-but-plausible system prompt doesn't
 // tip the total over the edge.
 const MAX_INLINE_CHARS = 8_000;

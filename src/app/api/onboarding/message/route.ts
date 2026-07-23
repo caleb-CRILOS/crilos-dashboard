@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { ChatMessage, OnboardingSession, OnboardingStage } from "@/lib/types";
 import {
-  buildContentBibleSystemPrompt,
+  buildContentGuideSystemPrompt,
   buildIcaSystemPrompt,
   buildSetupSystemPrompt,
   STAGE_COMPLETE_SENTINEL,
 } from "@/lib/onboarding/prompts";
-import { contentBibleSchema, icaSchema, setupSchema } from "@/lib/onboarding/schemas";
+import { contentGuideSchema, icaSchema, setupSchema } from "@/lib/onboarding/schemas";
 import { extractStructured, sendTurn } from "@/lib/claude-cli";
 import { generateDeliverable } from "@/lib/pdf/generate";
 
@@ -44,15 +44,15 @@ function newSession(clientId: string | undefined): OnboardingSession {
     stage: "setup",
     setupMessages: [],
     icaMessages: [],
-    contentBibleMessages: [],
+    contentGuideMessages: [],
     claudeSessionIds: {},
     profile: {},
     voice: {},
     ica: {},
-    contentBible: {},
+    contentGuide: {},
     setupComplete: false,
     icaComplete: false,
-    contentBibleComplete: false,
+    contentGuideComplete: false,
     deliverables: {},
     createdAt: now,
     updatedAt: now,
@@ -62,13 +62,13 @@ function newSession(clientId: string | undefined): OnboardingSession {
 function messagesFor(session: OnboardingSession, stage: OnboardingStage): ChatMessage[] {
   if (stage === "setup") return session.setupMessages;
   if (stage === "ica") return session.icaMessages;
-  return session.contentBibleMessages;
+  return session.contentGuideMessages;
 }
 
 function schemaFor(stage: OnboardingStage) {
   if (stage === "setup") return setupSchema;
   if (stage === "ica") return icaSchema;
-  return contentBibleSchema;
+  return contentGuideSchema;
 }
 
 // `revising` switches each stage into review mode: the same interview, but
@@ -86,11 +86,11 @@ function systemPromptFor(
   if (stage === "ica") {
     return buildIcaSystemPrompt(session.profile, revising ? session.ica : undefined);
   }
-  return buildContentBibleSystemPrompt(
+  return buildContentGuideSystemPrompt(
     session.profile,
     session.voice,
     session.ica,
-    revising ? session.contentBible : undefined,
+    revising ? session.contentGuide : undefined,
   );
 }
 
@@ -222,8 +222,8 @@ function applyStageResult(
     session.ica = { ...session.ica, ...input };
     session.icaComplete = true;
   } else {
-    session.contentBible = { ...session.contentBible, ...input };
-    session.contentBibleComplete = true;
+    session.contentGuide = { ...session.contentGuide, ...input };
+    session.contentGuideComplete = true;
   }
 
   // Stamp the finish so the UI can spot a later stage built on answers that a

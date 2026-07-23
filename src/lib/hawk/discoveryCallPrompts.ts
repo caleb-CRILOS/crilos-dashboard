@@ -9,7 +9,7 @@
 // DRAFT_REQUESTED_SENTINEL / ASSET_COMPLETE_SENTINEL check works for either
 // flow.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_CONTENT_PARTNER_TONE } from "../agents/atlasPersona";
 import { ASSET_COMPLETE_SENTINEL, DRAFT_REQUESTED_SENTINEL } from "./prompts";
@@ -20,7 +20,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 // The logical flow a discovery call prep sheet is organized around. Shared

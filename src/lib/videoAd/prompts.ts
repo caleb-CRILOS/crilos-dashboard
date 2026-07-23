@@ -5,7 +5,7 @@
 // simulated as separate resumed Claude CLI calls rather than true
 // Task-tool subagents). The client only ever sees Atlas.
 
-import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentGuide, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
 import { buildClientContextBlock } from "../agentContext";
 import { ATLAS_CONTENT_PARTNER_TONE } from "../agents/atlasPersona";
 
@@ -26,7 +26,7 @@ type ClientContextOpts = {
   profile?: OnboardingProfile;
   voice?: VoiceProfile;
   ica?: IcaProfile;
-  contentBible?: ContentBible;
+  contentGuide?: ContentGuide;
 };
 
 const PHILOSOPHY = `## The philosophy (hold yourself to this while drafting)
@@ -53,7 +53,7 @@ export function buildVideoAdSystemPrompt(opts: ClientContextOpts): string {
     noClientMessage: `No onboarding data is linked to this conversation yet. Say so plainly up
 front -- tell them you can still draft a script from whatever they tell you
 right now, but a completed Onboarding (especially the ICA and Content
-Bible) will make the hook and problem beats sharper and more specific.
+Guide) will make the hook and problem beats sharper and more specific.
 Then proceed with whatever they share in this chat.`,
   });
 
@@ -147,7 +147,7 @@ Solution (the 3 real steps), Why It Works, Call To Action. For each beat,
 ask for their actual words or detail -- this is their content, not a
 prompt for you to riff on. If they don't have something for a given beat,
 ask whether to skip it (Quill will draft that one instead, from the ICA
-and content bible context) or come back to it later; don't force an
+and content guide context) or come back to it later; don't force an
 answer out of them.
 
 ## Handing off the script
@@ -197,10 +197,10 @@ ${PHILOSOPHY}
 
 Write 2-3 candidate Dog Whistle hooks for the Step 1 hook (0-5 sec) of a
 video ad script -- each one a specific situation/symptom/number pulled
-from the ICA pain points or content bible above, not a generic topic.
+from the ICA pain points or content guide above, not a generic topic.
 
 Vary two things across the candidates, not just one:
-- **Which pain point or content bible goal** each one draws from.
+- **Which pain point or content guide goal** each one draws from.
 - **The sentence structure and opening word.** Don't let every option
   follow the same shell -- if all 3 end up phrased as "If you're
   [situation], this video is for you," that's a failure, not variety
@@ -242,7 +242,7 @@ Read the conversation above for the brief Atlas gathered. Two shapes are
 possible:
 - **Standard brief** -- the Dog Whistle hook, the promise, the value bomb
   keyword/resource, credibility, platform, and any grounding detail. Draft
-  each beat from this brief plus the ICA/content bible context above.
+  each beat from this brief plus the ICA/content guide context above.
 - **Step-by-step brief** -- Atlas's handoff message will say so plainly.
   The client dictated their own content for most or all of the 9 beats.
   For any beat they supplied, their words and details are the source of

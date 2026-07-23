@@ -104,7 +104,7 @@ export async function POST(req: Request) {
       profile: onboarding?.profile,
       voice: onboarding?.voice,
       ica: onboarding?.ica,
-      contentBible: onboarding?.contentBible,
+      contentGuide: onboarding?.contentGuide,
     };
 
     return {

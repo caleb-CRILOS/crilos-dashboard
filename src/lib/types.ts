@@ -207,11 +207,11 @@ export interface InsightEntry {
 }
 
 // Onboarding — a chat-driven interview modeled on the setup.md / /ica /
-// /content-bible scripts from the client's own CRILOS CLI product.
+// /content-guide scripts from the client's own CRILOS CLI product.
 // Three stages, run in order; each ends when the model calls that stage's
 // "finish_*" tool with its full structured output.
 
-export type OnboardingStage = "setup" | "ica" | "contentBible";
+export type OnboardingStage = "setup" | "ica" | "contentGuide";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -288,26 +288,26 @@ export interface IcaProfile {
   icaObjection?: string;
 }
 
-export interface ContentBibleGoalRow {
+export interface ContentGuideGoalRow {
   goal: string;
   mechanism: string;
   problem: string;
   knowsWhen: string;
 }
 
-export interface ContentBibleStepRow {
+export interface ContentGuideStepRow {
   step: string;
   problem: string;
   resource: string;
 }
 
-export interface ContentBible {
+export interface ContentGuide {
   overallAim?: string;
-  goals?: ContentBibleGoalRow[];
+  goals?: ContentGuideGoalRow[];
   objections?: string;
   voc?: string;
   methodologyName?: string;
-  steps?: ContentBibleStepRow[][];
+  steps?: ContentGuideStepRow[][];
 }
 
 export interface OnboardingSession {
@@ -319,17 +319,17 @@ export interface OnboardingSession {
   stage: OnboardingStage;
   setupMessages: ChatMessage[];
   icaMessages: ChatMessage[];
-  contentBibleMessages: ChatMessage[];
+  contentGuideMessages: ChatMessage[];
   // Claude Code CLI's own session id per stage, used with `--resume` so
   // each stage's conversation keeps context across turns.
   claudeSessionIds: Partial<Record<OnboardingStage, string>>;
   profile: OnboardingProfile;
   voice: VoiceProfile;
   ica: IcaProfile;
-  contentBible: ContentBible;
+  contentGuide: ContentGuide;
   setupComplete: boolean;
   icaComplete: boolean;
-  contentBibleComplete: boolean;
+  contentGuideComplete: boolean;
   // When each stage last finished, so the UI can tell that a later stage was
   // built on answers a redo has since changed (ICA is stale if setup completed
   // after it). Derived rather than stored as a flag so it can't drift. Absent
@@ -375,7 +375,7 @@ export interface AgentRunState {
 
 // Messaging Creator -- a chat-driven content-drafting conversation modeled
 // on the CRILOS CLI's `/messaging-creator` skill: greets, proposes ideas
-// pulled from the client's content bible, then drafts and voice-QAs
+// pulled from the client's content guide, then drafts and voice-QAs
 // whichever one is picked. Unlike onboarding this is meant to be run
 // repeatedly, so each run is its own short session tied to a client
 // (an onboarding session) rather than a multi-stage flow.
@@ -423,7 +423,7 @@ export interface MessagingPiece {
 export interface MessagingSession extends AgentRunState {
   id: string;
   // The onboarding session this piece is being drafted for -- supplies the
-  // profile/voice/ICA/content bible context. Optional so the tool still
+  // profile/voice/ICA/content guide context. Optional so the tool still
   // degrades gracefully if no client has been onboarded yet.
   onboardingSessionId?: string;
   clientLabel: string;
@@ -659,7 +659,7 @@ export interface SkoolPostSession extends AgentRunState {
 }
 
 // Digital Product Builder (Lead Generation) -- turns a client's content
-// bible (goals + the per-step "resource" column) into a finished digital
+// guide (goals + the per-step "resource" column) into a finished digital
 // product (ebook, workbook, checklist, etc.): Quill proposes ideas, gathers
 // a brief (including target length + output format), drafts an outline for
 // the client to confirm, then drafts the full product, Echo does a voice-QA
