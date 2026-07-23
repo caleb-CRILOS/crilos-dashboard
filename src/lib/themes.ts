@@ -14,7 +14,7 @@
 // "noir", "slate", "rosette") degrades to DEFAULT_THEME instead of
 // stamping a data-theme with no matching CSS block.
 
-export type ThemeName = "light" | "dark";
+export type ThemeName = "light" | "dark" | "midnight";
 
 export const DEFAULT_THEME: ThemeName = "light";
 
@@ -38,6 +38,12 @@ export const THEMES: ThemeMeta[] = [
     label: "Dark",
     blurb: "Deep slate surfaces, bright type, the same signal blue.",
     chips: ["#0d1117", "#e6edf5", "#2b8fdb"],
+  },
+  {
+    key: "midnight",
+    label: "Midnight",
+    blurb: "Deep indigo surfaces, a hot-pink accent, steel-blue links.",
+    chips: ["#1b1a3c", "#ece9fb", "#f5347f"],
   },
 ];
 
