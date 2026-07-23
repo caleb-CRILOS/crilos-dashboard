@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import StatusBar from "@/components/StatusBar";
@@ -9,16 +9,15 @@ import { getDb } from "@/lib/db";
 import { DEFAULT_THEME, isThemeName } from "@/lib/themes";
 import { MEMBERFUL_CONFIGURED, JOIN_URL } from "@/lib/auth/memberfulConfig";
 
-// Space Grotesk carries both display and body (variable name kept stable
-// as --font-space-grotesk; globals maps both --font-display and --font-sans
-// to it).
-const spaceGrotesk = Space_Grotesk({
+// Inter carries both display and body; globals maps --font-display and
+// --font-sans to it.
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  weight: ["400", "500", "700"],
+  variable: "--font-ui",
+  weight: ["400", "500", "600", "700"],
 });
 
-// JetBrains Mono carries data, labels, coordinates, annotations.
+// JetBrains Mono is reserved for genuine data: tabular figures, IDs, code.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-plex-mono",
@@ -56,23 +55,16 @@ export default async function RootLayout({
     <html
       lang="en"
       data-theme={theme}
-      className={`h-full antialiased ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={`h-full antialiased ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="min-h-full text-paper font-sans">
         {memberAuth ? (
-          /* The print-sheet — the whole app framed with hairline ink and
-             corner registration crosshairs. */
-          <div className="sheet overflow-hidden">
-            <span className="corner tl acid" aria-hidden="true" />
-            <span className="corner tr" aria-hidden="true" />
-            <span className="corner bl" aria-hidden="true" />
-            <span className="corner br acid" aria-hidden="true" />
-
+          <div className="sheet">
             <StatusBar />
 
-            <div className="flex min-h-[calc(100vh-10rem)]">
+            <div className="flex min-h-[calc(100vh-3rem)]">
               <Sidebar memberEmail={memberAuth.email} />
-              <main className="flex-1 min-w-0 px-6 py-8 md:px-10 md:py-10">
+              <main className="flex-1 min-w-0 px-6 py-8 md:px-10 md:py-12">
                 {children}
               </main>
             </div>

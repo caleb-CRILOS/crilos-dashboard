@@ -94,14 +94,14 @@ export default function ComposeEmailPanel() {
   return (
     <div className="hud-panel stack flex h-[600px] flex-col">
       <div className="flex items-center justify-between border-b border-line-strong px-4 py-3">
-        <div className="label-mono flex items-center gap-2 text-[12px] text-electric">
+        <div className="label-mono flex items-center gap-2 text-[13px] text-electric">
           <Mail size={14} />
           New email
         </div>
         {session && (
           <button
             onClick={handleNewDraft}
-            className="label-mono flex items-center gap-1 text-[11px] text-paper-faint hover:text-paper"
+            className="label-mono flex items-center gap-1 text-[13px] text-paper-faint hover:text-paper"
           >
             <Plus size={13} />
             New draft
@@ -138,9 +138,9 @@ export default function ComposeEmailPanel() {
       {hasDraft && (
         <div className="space-y-2 border-t border-line-strong p-4">
           <div className="flex items-center justify-between">
-            <span className="label-mono text-[11px] text-paper-faint">Draft</span>
+            <span className="label-mono text-[13px] text-paper-faint">Draft</span>
             {session!.status === "saved" && (
-              <span className="label-mono flex items-center gap-1 text-[11px] text-sage">
+              <span className="label-mono flex items-center gap-1 text-[13px] text-sage">
                 <CheckCircle2 size={13} />
                 Saved to Gmail Drafts
               </span>
@@ -168,7 +168,7 @@ export default function ComposeEmailPanel() {
             <button
               onClick={saveDraft}
               disabled={saving}
-              className="label-mono btn-accent px-3 py-1.5 text-[12px] disabled:opacity-50"
+              className="label-mono btn-accent px-3 py-1.5 text-[13px] disabled:opacity-50"
             >
               {saving ? "Saving…" : "Save as Gmail draft"}
             </button>

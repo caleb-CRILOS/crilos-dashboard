@@ -87,7 +87,7 @@ export default function ChatInputRow({
         <button
           onClick={onSend}
           disabled={disabled || (!value.trim() && !attachedFile)}
-          className="btn-accent flex items-center gap-1.5 px-3 py-2 text-[12px]"
+          className="btn-accent flex items-center gap-1.5 px-3 py-2 text-[13px]"
         >
           <Send size={15} />
           Send

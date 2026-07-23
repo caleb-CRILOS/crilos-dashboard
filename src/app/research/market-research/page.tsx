@@ -139,7 +139,7 @@ export default function MarketResearchPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Search size={14} />
         Build / Lead Generation / Market Research
       </div>
@@ -162,7 +162,7 @@ export default function MarketResearchPage() {
       {view === "list" ? (
         <div className="mt-6">
           <div className="hud-panel hud-panel-magenta stack p-5">
-            <h2 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display text-base font-semibold text-paper">
               Start a new research thread
             </h2>
             <p className="mt-1 text-sm text-paper-dim">
@@ -187,7 +187,7 @@ export default function MarketResearchPage() {
               <button
                 onClick={handleStartNewTopic}
                 disabled={loading || !newTopic.trim()}
-                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[12px] disabled:opacity-40"
+                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[13px] disabled:opacity-40"
               >
                 <Plus size={15} />
                 Start
@@ -196,7 +196,7 @@ export default function MarketResearchPage() {
           </div>
 
           <div className="mt-6">
-            <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display mb-3 text-lg font-semibold text-paper">
               Research threads
             </h2>
             {allSessions.length === 0 ? (
@@ -220,14 +220,14 @@ export default function MarketResearchPage() {
                           <button
                             onClick={() => confirmDeleteThread(s.id)}
                             disabled={deleteThreadBusy}
-                            className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                           >
                             Delete
                           </button>
                           <button
                             onClick={() => setDeletingThreadId(null)}
                             disabled={deleteThreadBusy}
-                            className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                           >
                             Cancel
                           </button>
@@ -261,7 +261,7 @@ export default function MarketResearchPage() {
           </div>
 
           <div className="mt-10">
-            <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display mb-3 text-lg font-semibold text-paper">
               Repository
             </h2>
             <p className="mb-3 text-sm text-paper-dim">
@@ -291,14 +291,14 @@ export default function MarketResearchPage() {
                           <button
                             onClick={() => confirmDeleteBrandedDoc(s.id)}
                             disabled={deleteDocBusy}
-                            className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                           >
                             Delete
                           </button>
                           <button
                             onClick={() => setDeletingDocId(null)}
                             disabled={deleteDocBusy}
-                            className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                           >
                             Cancel
                           </button>
@@ -321,14 +321,14 @@ export default function MarketResearchPage() {
                             href={`/api/sage/deliverables/${s.brandedDoc!.fileName}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                           >
                             <Download size={14} />
                             View doc
                           </a>
                           <button
                             onClick={() => setDeletingDocId(s.id)}
-                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                           >
                             <Trash2 size={14} />
                             Delete
@@ -347,14 +347,14 @@ export default function MarketResearchPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={backToList}
-                className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
               >
                 <ArrowLeft size={14} />
                 All research threads
               </button>
               <button
                 onClick={handleNewSession}
-                className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
               >
                 <Plus size={14} />
                 New session
@@ -365,7 +365,7 @@ export default function MarketResearchPage() {
               <button
                 onClick={handleExportBrandedDoc}
                 disabled={loading || exportingDoc || !sessionId}
-                className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-40"
+                className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-40"
               >
                 <Sparkles size={14} />
                 {exportingDoc ? "Designing…" : "Export"}

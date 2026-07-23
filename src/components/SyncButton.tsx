@@ -30,7 +30,7 @@ export default function SyncButton() {
       <button
         onClick={handleSync}
         disabled={pending}
-        className="btn-ghost label-mono flex items-center gap-2 px-3 py-1.5 text-[12px] disabled:opacity-50"
+        className="btn-ghost label-mono flex items-center gap-2 px-3 py-1.5 text-[13px] disabled:opacity-50"
       >
         <RefreshCw size={14} className={pending ? "animate-spin" : ""} />
         Sync GoHighLevel

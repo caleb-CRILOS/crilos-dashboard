@@ -128,7 +128,7 @@ export default function SkoolPostPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="max-w-2xl">
-        <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+        <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
           <ClipboardList size={14} />
           Build / Efficiency Engine / Skool Posts
         </div>
@@ -154,12 +154,12 @@ export default function SkoolPostPage() {
         <div>
           {!started ? (
             <div className="hud-panel hud-panel-magenta stack flex h-[640px] flex-col items-center justify-center p-8 text-center">
-              <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+              <h2 className="font-display text-lg font-semibold text-paper">
                 Start a new Skool post
               </h2>
 
               <div className="mt-4 w-full max-w-xs text-left">
-                <label className="label-mono mb-1 block text-[11px] text-paper-faint">
+                <label className="label-mono mb-1 block text-[13px] text-paper-faint">
                   Post format
                 </label>
                 <select
@@ -177,7 +177,7 @@ export default function SkoolPostPage() {
 
               <button
                 onClick={handleStart}
-                className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[12px]"
+                className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[13px]"
               >
                 <Play size={15} />
                 Start Skool Posts
@@ -186,10 +186,10 @@ export default function SkoolPostPage() {
           ) : (
             <div className="hud-panel hud-panel-magenta stack flex h-[640px] flex-col">
               <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-                <div className="label-mono text-[12px] text-paper-dim">{session?.clientLabel}</div>
+                <div className="label-mono text-[13px] text-paper-dim">{session?.clientLabel}</div>
                 <button
                   onClick={handleNewPost}
-                  className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                  className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
                 >
                   <Plus size={14} />
                   New session
@@ -224,14 +224,14 @@ export default function SkoolPostPage() {
                 <span className="flex items-center gap-2">
                   <button
                     onClick={() => copyToClipboard(session.post.finalText ?? "", "current")}
-                    className="label-mono flex items-center gap-1 rounded-sm border border-sage px-3 py-1 text-[11px] text-sage hover:bg-sage/10"
+                    className="label-mono flex items-center gap-1 rounded-sm border border-sage px-3 py-1 text-[13px] text-sage hover:bg-sage/10"
                   >
                     {copiedKey === "current" ? <Check size={13} /> : <Copy size={13} />}
                     {copiedKey === "current" ? "Copied" : "Copy"}
                   </button>
                   <button
                     onClick={handleNewPost}
-                    className="label-mono rounded-sm border border-sage px-3 py-1 text-[11px] text-sage hover:bg-sage/10"
+                    className="label-mono rounded-sm border border-sage px-3 py-1 text-[13px] text-sage hover:bg-sage/10"
                   >
                     Draft another
                   </button>
@@ -246,7 +246,7 @@ export default function SkoolPostPage() {
       </div>
 
       <div className="mt-8">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display mb-3 text-lg font-semibold text-paper">
           Recent posts
         </h2>
         {history.length === 0 ? (
@@ -266,14 +266,14 @@ export default function SkoolPostPage() {
                     <button
                       onClick={() => confirmDelete(s.id)}
                       disabled={deleteBusy}
-                      className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                      className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                     >
                       Delete
                     </button>
                     <button
                       onClick={() => setDeletingId(null)}
                       disabled={deleteBusy}
-                      className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                      className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -282,7 +282,7 @@ export default function SkoolPostPage() {
               ) : (
                 <div key={s.id} className="hud-panel stack p-4">
                   <div className="flex items-center justify-between">
-                    <span className="label-mono text-[11px] text-paper-faint">
+                    <span className="label-mono text-[13px] text-paper-faint">
                       {s.post.mode || "Post"}
                     </span>
                     <span className="flex items-center gap-2 text-paper-faint">
@@ -313,14 +313,14 @@ export default function SkoolPostPage() {
 
       <div className="mt-8">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Post history
           </h2>
           <div className="flex items-center gap-2">
             {completed.length > 0 && (
               <button
                 onClick={() => setConfirmDeleteAll(true)}
-                className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:border-gold hover:text-gold"
+                className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-gold hover:text-gold"
               >
                 <Trash2 size={14} />
                 Delete all posts
@@ -328,7 +328,7 @@ export default function SkoolPostPage() {
             )}
             <button
               onClick={() => setShowAll((v) => !v)}
-              className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:border-electric hover:text-paper"
+              className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper"
             >
               {showAll ? "Hide" : `View all (${completed.length})`}
             </button>
@@ -355,14 +355,14 @@ export default function SkoolPostPage() {
                       <button
                         onClick={() => confirmDelete(s.id)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                       >
                         Delete
                       </button>
                       <button
                         onClick={() => setDeletingId(null)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -374,7 +374,7 @@ export default function SkoolPostPage() {
                     className="flex items-center justify-between gap-3 rounded-sm border border-line-strong bg-ink px-4 py-3 text-sm hover:border-electric"
                   >
                     <span className="min-w-0 flex-1">
-                      <span className="label-mono mr-2 text-[11px] text-paper-faint">
+                      <span className="label-mono mr-2 text-[13px] text-paper-faint">
                         {s.post.mode || "Post"}
                       </span>
                       <span className="text-paper-dim">{truncate(s.post.finalText ?? "", 100)}</span>
@@ -384,7 +384,7 @@ export default function SkoolPostPage() {
                       <button
                         onClick={() => copyToClipboard(s.post.finalText ?? "", s.id)}
                         aria-label="Copy post"
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         {copiedKey === s.id ? <Check size={14} /> : <Copy size={14} />}
                         {copiedKey === s.id ? "Copied" : "Copy"}
@@ -392,7 +392,7 @@ export default function SkoolPostPage() {
                       <button
                         onClick={() => setDeletingId(s.id)}
                         aria-label="Delete post"
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <Trash2 size={14} />
                         Delete
@@ -408,7 +408,7 @@ export default function SkoolPostPage() {
       {confirmDeleteAll && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4">
           <div className="hud-panel stack w-full max-w-sm border-l-[3px] border-gold p-5">
-            <h3 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h3 className="font-display text-base font-semibold text-paper">
               Delete all posts?
             </h3>
             <p className="mt-2 text-sm text-paper-dim">
@@ -419,14 +419,14 @@ export default function SkoolPostPage() {
               <button
                 onClick={() => setConfirmDeleteAll(false)}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
               >
                 {deleteAllBusy ? "Deleting…" : "Delete all"}
               </button>

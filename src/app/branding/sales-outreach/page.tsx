@@ -91,7 +91,7 @@ export default function SalesOutreachPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Palette size={14} />
         Build / Sales Conversion / Sales Outreach
       </div>
@@ -114,7 +114,7 @@ export default function SalesOutreachPage() {
 
       {!started ? (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col items-center justify-center p-8 text-center">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Start a new sales asset
           </h2>
           <p className="mt-2 max-w-sm text-sm text-paper-dim">
@@ -124,7 +124,7 @@ export default function SalesOutreachPage() {
 
           <button
             onClick={handleStart}
-            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[12px]"
+            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[13px]"
           >
             <Play size={15} />
             Start Sales Outreach
@@ -133,10 +133,10 @@ export default function SalesOutreachPage() {
       ) : (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col">
           <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-            <div className="label-mono text-[12px] text-paper-dim">{session?.clientLabel}</div>
+            <div className="label-mono text-[13px] text-paper-dim">{session?.clientLabel}</div>
             <button
               onClick={handleNewAsset}
-              className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+              className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
             >
               <Plus size={14} />
               New session
@@ -173,7 +173,7 @@ export default function SalesOutreachPage() {
             </span>
             <button
               onClick={handleNewAsset}
-              className="label-mono rounded-sm border border-sage px-3 py-1 text-[11px] text-sage hover:bg-sage/10"
+              className="label-mono rounded-sm border border-sage px-3 py-1 text-[13px] text-sage hover:bg-sage/10"
             >
               Draft another
             </button>
@@ -185,7 +185,7 @@ export default function SalesOutreachPage() {
       )}
 
       <div className="mt-10">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display mb-3 text-lg font-semibold text-paper">
           Repository
         </h2>
         <p className="mb-3 text-sm text-paper-dim">
@@ -212,14 +212,14 @@ export default function SalesOutreachPage() {
                       <button
                         onClick={() => confirmDelete(s.id)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                       >
                         Delete
                       </button>
                       <button
                         onClick={() => setDeletingId(null)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -242,7 +242,7 @@ export default function SalesOutreachPage() {
                         href={`/api/hawk/deliverables/${s.deliverable!.fileName}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <Download size={14} />
                         {formatLabel(s.deliverable!.fileName) === "PDF" ||
@@ -253,7 +253,7 @@ export default function SalesOutreachPage() {
                       <button
                         onClick={() => setDeletingId(s.id)}
                         aria-label={`Delete ${s.deliverable!.title}`}
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <Trash2 size={14} />
                         Delete

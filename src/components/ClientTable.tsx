@@ -15,7 +15,7 @@ export default function ClientTable({ clients }: { clients: Client[] }) {
   return (
     <div className="hud-panel stack overflow-hidden">
       <table className="w-full text-sm">
-        <thead className="label-mono bg-paper text-left text-[11px] text-ink">
+        <thead className="label-mono bg-ink text-left text-[13px] text-paper-dim">
           <tr>
             <th className="px-4 py-3 font-semibold">Client</th>
             <th className="px-4 py-3 font-semibold">Source</th>

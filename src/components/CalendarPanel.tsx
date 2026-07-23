@@ -270,7 +270,7 @@ export default function CalendarPanel() {
               setAdding((v) => !v);
               setEditingId(null);
             }}
-            className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[12px]"
+            className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[13px]"
           >
             <Plus size={14} />
             Event
@@ -278,7 +278,7 @@ export default function CalendarPanel() {
           <button
             onClick={load}
             disabled={loading}
-            className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
+            className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             Refresh
@@ -317,7 +317,7 @@ export default function CalendarPanel() {
 
       {/* Today */}
       <div className="hud-panel stack overflow-hidden">
-        <div className="label-mono flex items-center gap-2 border-b border-line bg-paper px-4 py-2.5 text-[11px] text-ink">
+        <div className="label-mono flex items-center gap-2 border-b border-line bg-ink px-4 py-2.5 text-[13px] text-paper-dim">
           <CalendarDays size={13} />
           TODAY · {format(now, "EEE, MMM d")}
         </div>
@@ -358,7 +358,7 @@ export default function CalendarPanel() {
                               </span>
                             )}
                           </div>
-                          <div className="label-mono mt-0.5 text-[11px] text-paper-faint">
+                          <div className="label-mono mt-0.5 text-[13px] text-paper-faint">
                             {timeLabel(e)}
                           </div>
                           {e.location && (
@@ -384,7 +384,7 @@ export default function CalendarPanel() {
                             <button
                               onClick={() => removeEvent(e.id)}
                               disabled={busyId === e.id}
-                              className="label-mono rounded-sm border border-gold px-2 py-1.5 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                              className="label-mono rounded-sm border border-gold px-2 py-1.5 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                             >
                               {busyId === e.id ? "…" : "Confirm?"}
                             </button>
@@ -410,7 +410,7 @@ export default function CalendarPanel() {
 
       {/* This week */}
       <div className="mt-4">
-        <div className="label-mono mb-2 text-[11px] text-paper-faint">THIS WEEK</div>
+        <div className="label-mono mb-2 text-[13px] text-paper-faint">THIS WEEK</div>
         <div className="overflow-x-auto">
           <div className="grid min-w-[680px] grid-cols-7 gap-2">
             {days.map((day) => {
@@ -426,7 +426,7 @@ export default function CalendarPanel() {
                   }`}
                 >
                   <div
-                    className={`label-mono mb-1.5 text-[10px] ${
+                    className={`label-mono mb-1.5 text-xs ${
                       isToday ? "text-clay" : "text-paper-faint"
                     }`}
                   >
@@ -434,7 +434,7 @@ export default function CalendarPanel() {
                   </div>
                   <div className="flex flex-col gap-1">
                     {dayEvents.length === 0 ? (
-                      <span className="text-[11px] text-paper-faint/50">—</span>
+                      <span className="text-[13px] text-paper-faint/50">—</span>
                     ) : (
                       dayEvents.map((e) => (
                         <button
@@ -450,7 +450,7 @@ export default function CalendarPanel() {
                           <span className="label-mono block text-[9px] text-paper-faint">
                             {e.allDay ? "All day" : format(parseISO(e.start), "h:mm a")}
                           </span>
-                          <span className="line-clamp-2 text-[11px] text-paper">{e.summary}</span>
+                          <span className="line-clamp-2 text-[13px] text-paper">{e.summary}</span>
                         </button>
                       ))
                     )}
@@ -518,14 +518,14 @@ function EventForm({
   return (
     <div className="hud-panel stack space-y-3 p-4">
       <div className="flex items-center justify-between">
-        <span className="label-mono text-[11px] text-paper-faint">{title}</span>
+        <span className="label-mono text-[13px] text-paper-faint">{title}</span>
         <button onClick={onCancel} className="text-paper-faint hover:text-paper" title="Cancel">
           <X size={15} />
         </button>
       </div>
 
       <div>
-        <label className="label-mono mb-1 block text-[11px] text-paper-faint">Title</label>
+        <label className="label-mono mb-1 block text-[13px] text-paper-faint">Title</label>
         <input
           value={values.summary}
           onChange={(e) => set("summary", e.target.value)}
@@ -536,7 +536,7 @@ function EventForm({
 
       <div className="flex flex-wrap gap-3">
         <div className="min-w-[8rem] flex-1">
-          <label className="label-mono mb-1 block text-[11px] text-paper-faint">Date</label>
+          <label className="label-mono mb-1 block text-[13px] text-paper-faint">Date</label>
           <input
             type="date"
             value={values.date}
@@ -547,7 +547,7 @@ function EventForm({
         {!values.allDay && (
           <>
             <div className="min-w-[6rem] flex-1">
-              <label className="label-mono mb-1 block text-[11px] text-paper-faint">Start</label>
+              <label className="label-mono mb-1 block text-[13px] text-paper-faint">Start</label>
               <input
                 type="time"
                 value={values.startTime}
@@ -556,7 +556,7 @@ function EventForm({
               />
             </div>
             <div className="min-w-[6rem] flex-1">
-              <label className="label-mono mb-1 block text-[11px] text-paper-faint">End</label>
+              <label className="label-mono mb-1 block text-[13px] text-paper-faint">End</label>
               <input
                 type="time"
                 value={values.endTime}
@@ -576,13 +576,13 @@ function EventForm({
           onChange={(e) => set("allDay", e.target.checked)}
           className="h-3.5 w-3.5 accent-clay"
         />
-        <label htmlFor="allDay" className="label-mono text-[11px] text-paper-dim">
+        <label htmlFor="allDay" className="label-mono text-[13px] text-paper-dim">
           All day
         </label>
       </div>
 
       <div>
-        <label className="label-mono mb-1 block text-[11px] text-paper-faint">
+        <label className="label-mono mb-1 block text-[13px] text-paper-faint">
           Location <span className="text-paper-faint/60">(optional)</span>
         </label>
         <input
@@ -598,14 +598,14 @@ function EventForm({
       <div className="flex items-center justify-end gap-2">
         <button
           onClick={onCancel}
-          className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-paper hover:text-paper"
+          className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-clay hover:text-signal-ink"
         >
           Cancel
         </button>
         <button
           onClick={submit}
           disabled={saving}
-          className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[12px] disabled:opacity-50"
+          className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[13px] disabled:opacity-50"
         >
           <Check size={14} />
           {saving ? "Saving…" : "Save"}

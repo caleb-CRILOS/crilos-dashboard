@@ -8,10 +8,10 @@ export default function AgentDirectory() {
           <Icon size={17} className="mt-0.5 shrink-0 text-paper" />
           <div className="min-w-0">
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-sm font-bold uppercase tracking-tight text-paper">
+              <span className="font-display text-sm font-semibold tracking-tight text-paper">
                 {name}
               </span>
-              <span className="label-mono text-[10px] text-paper-faint">{role}</span>
+              <span className="label-mono text-xs text-paper-faint">{role}</span>
             </div>
             <p className="mt-0.5 text-xs leading-relaxed text-paper-dim">{purpose}</p>
           </div>

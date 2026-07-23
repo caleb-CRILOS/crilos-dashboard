@@ -1,20 +1,14 @@
 import { HealthStatus } from "@/lib/types";
 
-// KORE is monochrome + one Signal blue. The three tiers escalate in weight,
-// with blue reserved for the two states that ask you to act:
-//   on-track       -> halftone border + half square (quiet)
-//   needs-attention-> ink border + Signal square dot
-//   at-risk        -> inverted Signal chip (blue fill + light text) — "act"
-const styles: Record<HealthStatus, string> = {
-  green: "border-line text-paper-faint",
-  yellow: "border-paper text-paper",
-  red: "border-clay bg-clay text-signal-fg",
-};
-
+// A neutral pill carrying a colored status dot. The previous design system
+// was monochrome + one blue, so the three tiers had to escalate through
+// border weight and an inverted chip; with real semantic colors available
+// the status reads straight off the dot. See src/app/globals.css for the
+// --dm-health-* tokens, which flip per theme to stay legible.
 const dotStyles: Record<HealthStatus, string> = {
-  green: "bg-line",
-  yellow: "bg-clay",
-  red: "bg-signal-fg",
+  green: "bg-dm-health-green",
+  yellow: "bg-dm-health-yellow",
+  red: "bg-dm-health-red",
 };
 
 const labels: Record<HealthStatus, string> = {
@@ -25,10 +19,11 @@ const labels: Record<HealthStatus, string> = {
 
 export default function HealthBadge({ status }: { status: HealthStatus }) {
   return (
-    <span
-      className={`label-mono inline-flex items-center gap-1.5 border px-2.5 py-0.5 text-[11px] ${styles[status]}`}
-    >
-      <span className={`h-1.5 w-1.5 ${dotStyles[status]}`} aria-hidden="true" />
+    <span className="label-mono inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[13px] text-paper-dim">
+      <span
+        className={`h-2 w-2 rounded-full ${dotStyles[status]}`}
+        aria-hidden="true"
+      />
       {labels[status]}
     </span>
   );

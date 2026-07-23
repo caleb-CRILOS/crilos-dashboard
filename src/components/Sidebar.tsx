@@ -108,10 +108,10 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
   }, [pathname]);
 
   const linkClass = (active: boolean) =>
-    `label-mono flex items-center gap-3 rounded-sm border-l-2 px-3 py-2 text-[12px] transition-colors ${
+    `label-mono flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
       active
-        ? "border-clay bg-ink-raised text-paper"
-        : "border-transparent text-paper-dim hover:border-line-strong hover:bg-paper/5 hover:text-paper"
+        ? "bg-clay-soft font-semibold text-signal-ink"
+        : "text-paper-dim hover:bg-paper/[0.04] hover:text-paper"
     }`;
 
   function toggleGroup(href: string) {
@@ -119,19 +119,19 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
   }
 
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-line bg-ink-recessed px-4 py-6">
-      <div className="mb-8 px-2">
-        <div className="font-display text-2xl uppercase tracking-tight text-paper">
+    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-line bg-ink-recessed px-3 py-6">
+      <div className="mb-8 px-3">
+        <div className="font-display text-2xl font-semibold tracking-tight text-paper">
           CRILOS
         </div>
-        <div className="label-mono mt-1 text-[10px] leading-relaxed text-paper-faint">
+        <div className="label-mono mt-1 text-[13px] leading-relaxed text-paper-faint">
           Coach Reasoning, Intelligence &amp; Leverage OS
         </div>
       </div>
 
       <nav className="flex flex-col gap-4">
         <div>
-          <div className="label-mono mb-1.5 px-3 text-[11px] text-paper-faint">
+          <div className="label-mono mb-1.5 px-3 text-[13px] font-semibold text-paper-faint">
             Operate
           </div>
           <div className="flex flex-col gap-0.5">
@@ -143,7 +143,7 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
                   {label}
                   {flagUnseen && (
                     <span
-                      className="ml-auto h-1.5 w-1.5 shrink-0 border border-paper bg-clay"
+                      className="ml-auto h-2 w-2 shrink-0 rounded-full bg-clay"
                       aria-hidden="true"
                     />
                   )}
@@ -154,7 +154,7 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
         </div>
 
         <div>
-          <div className="label-mono mb-1.5 px-3 text-[11px] text-paper-faint">
+          <div className="label-mono mb-1.5 px-3 text-[13px] font-semibold text-paper-faint">
             Build
           </div>
           <div className="flex flex-col gap-0.5">
@@ -165,16 +165,16 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
               return (
                 <div key={group.href}>
                   <div
-                    className={`label-mono flex items-center rounded-sm border-l-2 text-[12px] transition-colors ${
+                    className={`label-mono flex items-center rounded-lg text-sm transition-colors ${
                       active
-                        ? "border-clay bg-ink-raised text-paper"
-                        : "border-transparent text-paper-dim hover:border-line-strong hover:bg-paper/5 hover:text-paper"
+                        ? "bg-clay-soft font-semibold text-signal-ink"
+                        : "text-paper-dim hover:bg-paper/[0.04] hover:text-paper"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => toggleGroup(group.href)}
-                      className="flex flex-1 items-center gap-3 px-3 py-2 text-left"
+                      className="flex flex-1 items-center gap-3 px-3 py-2.5 text-left"
                     >
                       <Icon size={17} />
                       {group.label}
@@ -192,9 +192,9 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
                     </button>
                   </div>
                   {open && (
-                    <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-line-strong pl-3">
+                    <div className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-line pl-3">
                       {group.children.length === 0 ? (
-                        <div className="label-mono px-3 py-1.5 text-[11px] text-paper-faint">
+                        <div className="label-mono px-3 py-1.5 text-sm text-paper-faint">
                           No tools yet
                         </div>
                       ) : (
@@ -222,7 +222,7 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
           <Settings size={17} />
           Settings
         </Link>
-        <div className="px-3 font-mono text-[12px] leading-relaxed text-paper-faint">
+        <div className="px-3 text-[13px] leading-relaxed text-paper-faint">
           Runs 100% locally.
           <br />
           Your data never leaves this machine
@@ -231,11 +231,11 @@ export default function Sidebar({ memberEmail }: { memberEmail?: string }) {
         </div>
         {memberEmail && (
           <div className="border-t border-line px-3 pt-4">
-            <div className="label-mono text-[10px] text-paper-faint">
+            <div className="label-mono text-[13px] text-paper-faint">
               Signed in
             </div>
             <div
-              className="mt-1 truncate font-mono text-[11px] text-paper-dim"
+              className="mt-1 truncate text-sm text-paper-dim"
               title={memberEmail}
             >
               {memberEmail}

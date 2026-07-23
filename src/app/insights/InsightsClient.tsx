@@ -46,7 +46,7 @@ export default function InsightsClient({
             Insights
           </h1>
           {!INSIGHTS_BRIEF_ENABLED && (
-            <p className="label-mono mt-1 text-[11px] text-gold">
+            <p className="label-mono mt-1 text-[13px] text-gold">
               Section under development
             </p>
           )}
@@ -59,7 +59,7 @@ export default function InsightsClient({
           <button
             onClick={generate}
             disabled={loading}
-            className="label-mono flex items-center gap-2 btn-accent px-3 py-1.5 text-[12px] disabled:opacity-50"
+            className="label-mono flex items-center gap-2 btn-accent px-3 py-1.5 text-[13px] disabled:opacity-50"
           >
             <Sparkles size={14} />
             {loading ? "Thinking..." : "Generate today's brief"}
@@ -75,13 +75,13 @@ export default function InsightsClient({
       )}
 
       <div className="mt-8">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display mb-3 text-lg font-semibold text-paper">
           DM 2 Close Metrics
         </h2>
         <div className="hud-panel stack overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="label-mono border-b border-line text-left text-[11px] text-paper-faint">
+              <tr className="label-mono border-b border-line text-left text-[13px] text-paper-faint">
                 <th className="px-5 py-3 font-semibold">Total conversations</th>
                 <th className="px-5 py-3 font-semibold">Yes (converted)</th>
                 <th className="px-5 py-3 font-semibold">No (didn&apos;t convert)</th>
@@ -112,7 +112,7 @@ export default function InsightsClient({
         )}
         {insights.map((insight) => (
           <div key={insight.id} className="hud-panel hud-panel-magenta stack p-5">
-            <div className="label-mono mb-3 text-[12px] text-paper-faint">
+            <div className="label-mono mb-3 text-[13px] text-paper-faint">
               {formatDistanceToNow(new Date(insight.generatedAt), {
                 addSuffix: true,
               })}
@@ -121,7 +121,7 @@ export default function InsightsClient({
 
             {insight.priorities.length > 0 && (
               <div className="mt-4">
-                <div className="label-mono mb-1.5 text-[11px] text-paper-faint">Priorities</div>
+                <div className="label-mono mb-1.5 text-[13px] text-paper-faint">Priorities</div>
                 <ul className="space-y-1 text-sm text-paper-dim">
                   {insight.priorities.map((p, i) => (
                     <li key={i} className="flex gap-2">
@@ -134,7 +134,7 @@ export default function InsightsClient({
 
             {insight.flags.length > 0 && (
               <div className="mt-4">
-                <div className="label-mono mb-1.5 text-[11px] text-paper">[ ! ] Flags</div>
+                <div className="label-mono mb-1.5 text-[13px] text-paper">[ ! ] Flags</div>
                 <ul className="space-y-1 text-sm text-paper">
                   {insight.flags.map((f, i) => (
                     <li key={i} className="flex gap-2">

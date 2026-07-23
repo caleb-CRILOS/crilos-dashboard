@@ -63,10 +63,10 @@ export default function ClientAssetsPanel({ clientId }: { clientId: string }) {
   return (
     <div className="mt-10">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display text-lg font-semibold text-paper">
           Source material
         </h2>
-        <label className="label-mono flex cursor-pointer items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper">
+        <label className="label-mono flex cursor-pointer items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper">
           <Upload size={14} />
           {uploading ? "Uploading…" : "Upload .txt/.md"}
           <input

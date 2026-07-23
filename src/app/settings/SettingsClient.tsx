@@ -5,7 +5,6 @@ import { Settings } from "@/lib/types";
 import { ThemeName, THEMES, DEFAULT_THEME, isThemeName } from "@/lib/themes";
 import { ModelKey, MODELS, DEFAULT_MODEL, isModelKey } from "@/lib/models";
 import { Save, Upload, CheckCircle2, Mail, AlertCircle, Check } from "lucide-react";
-import RegistrationMark from "@/components/motifs/RegistrationMark";
 
 type MaskedSettings = Settings & {
   _hasGhlToken?: boolean;
@@ -100,7 +99,17 @@ export default function SettingsClient({
   // independent of the main Save button — mirrors the old ModelPicker.
   async function selectTheme(next: ThemeName) {
     setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
+    const root = document.documentElement;
+    root.setAttribute("data-theme", next);
+    // Chromium doesn't reliably invalidate every element when only the root's
+    // data-theme flips: surfaces driven by base-layer rules repaint, but some
+    // elements colored through a custom property (e.g. the sidebar's active
+    // pill, which resolves --clay-soft / --signal-ink) keep the previous
+    // theme's values until something else forces a restyle. Detaching and
+    // reattaching the root forces a full recalc so the switch is complete.
+    root.style.setProperty("display", "none");
+    void root.offsetHeight;
+    root.style.removeProperty("display");
     await fetch("/api/settings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -128,8 +137,6 @@ export default function SettingsClient({
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <div className="relative">
-        <RegistrationMark className="absolute right-0 top-0 hidden h-5 w-5 sm:block" />
-        <div className="sec-num mb-3">§ · SETTINGS</div>
         <h1 className="bleed-type text-paper">
           Settings
         </h1>
@@ -140,11 +147,11 @@ export default function SettingsClient({
       </div>
 
       <Section title="Appearance">
-        <p className="text-xs text-paper-faint">
+        <p className="text-sm text-paper-faint">
           Pick a color theme for the dashboard. Applies instantly and saves on
-          click — only colors change, never fonts.
+          click — only colors change, never fonts or layout.
         </p>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {THEMES.map((t) => {
             const active = theme === t.key;
             return (
@@ -153,10 +160,10 @@ export default function SettingsClient({
                 type="button"
                 onClick={() => selectTheme(t.key)}
                 aria-pressed={active}
-                className={`flex items-center gap-3 border p-3 text-left transition-colors ${
+                className={`flex items-center gap-3 rounded-lg border p-4 text-left transition-colors ${
                   active
                     ? "border-clay stack bg-ink-raised"
-                    : "border-line-strong bg-ink-raised hover:border-clay"
+                    : "border-line bg-ink-raised hover:border-clay"
                 }`}
               >
                 <span className="flex shrink-0 gap-1" aria-hidden="true">
@@ -164,16 +171,16 @@ export default function SettingsClient({
                     <span
                       key={i}
                       style={{ backgroundColor: c }}
-                      className="h-7 w-4 border border-line-strong"
+                      className="h-8 w-4 rounded-sm border border-line"
                     />
                   ))}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="label-mono flex items-center gap-1 text-[12px] text-paper">
+                  <span className="label-mono flex items-center gap-1 text-[14px] font-semibold text-paper">
                     {t.label}
-                    {active && <Check size={12} className="text-clay" />}
+                    {active && <Check size={14} className="text-clay" />}
                   </span>
-                  <span className="mt-0.5 block text-[11px] text-paper-faint">
+                  <span className="mt-0.5 block text-sm text-paper-faint">
                     {t.blurb}
                   </span>
                 </span>
@@ -182,8 +189,8 @@ export default function SettingsClient({
           })}
         </div>
         {themeSaved && (
-          <div className="label-mono flex items-center gap-1 text-[10px] text-sage">
-            <Check size={11} /> Saved
+          <div className="label-mono flex items-center gap-1 text-sm text-sage">
+            <Check size={13} /> Saved
           </div>
         )}
       </Section>
@@ -256,7 +263,7 @@ export default function SettingsClient({
           type="password"
         />
         <div>
-          <label className="label-mono mb-1 block text-[11px] text-paper-faint">
+          <label className="label-mono mb-1 block text-[13px] text-paper-faint">
             Import member CSV
           </label>
           <label className="flex w-fit cursor-pointer items-center gap-2 rounded-sm border border-dashed border-line-strong px-3 py-2 text-xs text-paper-dim hover:border-electric">
@@ -307,13 +314,13 @@ export default function SettingsClient({
         <div className="flex items-center gap-3 pt-1">
           <a
             href="/api/email/oauth/start"
-            className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper"
+            className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper"
           >
             <Mail size={14} />
             {initialSettings._gmailConnected ? "Reconnect Google" : "Connect Google"}
           </a>
           {initialSettings._gmailConnected && (
-            <span className="label-mono flex items-center gap-1 text-[11px] text-sage">
+            <span className="label-mono flex items-center gap-1 text-[13px] text-sage">
               <CheckCircle2 size={14} />
               Connected
             </span>
@@ -371,7 +378,7 @@ export default function SettingsClient({
 
       <button
         onClick={save}
-        className="label-mono flex items-center gap-2 btn-accent px-4 py-2 text-[12px]"
+        className="label-mono flex items-center gap-2 btn-accent px-4 py-2 text-[13px]"
       >
         {saved ? <CheckCircle2 size={16} /> : <Save size={16} />}
         {saved ? "Saved" : "Save settings"}
@@ -383,7 +390,7 @@ export default function SettingsClient({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="hud-panel stack p-5">
-      <h2 className="font-display mb-3 text-base font-bold uppercase tracking-wide text-paper">
+      <h2 className="font-display mb-3 text-base font-semibold text-paper">
         {title}
       </h2>
       <div className="space-y-3">{children}</div>
@@ -406,7 +413,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="label-mono mb-1 block text-[11px] text-paper-faint">{label}</label>
+      <label className="label-mono mb-1 block text-[13px] text-paper-faint">{label}</label>
       <input
         type={type}
         value={value}

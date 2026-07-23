@@ -169,7 +169,7 @@ export default function DigitalProductBuilderPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <BookOpen size={14} />
         Build / Lead Generation / Digital Product Builder
       </div>
@@ -190,7 +190,7 @@ export default function DigitalProductBuilderPage() {
 
       {!started ? (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col items-center justify-center p-8 text-center">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Start a new digital product
           </h2>
           <p className="mt-2 max-w-sm text-sm text-paper-dim">
@@ -201,7 +201,7 @@ export default function DigitalProductBuilderPage() {
 
           <button
             onClick={handleStart}
-            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[12px]"
+            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[13px]"
           >
             <Play size={15} />
             Start Digital Product Builder
@@ -210,10 +210,10 @@ export default function DigitalProductBuilderPage() {
       ) : (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col">
           <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-            <div className="label-mono text-[12px] text-paper-dim">{session?.clientLabel}</div>
+            <div className="label-mono text-[13px] text-paper-dim">{session?.clientLabel}</div>
             <button
               onClick={handleNewProduct}
-              className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+              className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
             >
               <Plus size={14} />
               New session
@@ -249,7 +249,7 @@ export default function DigitalProductBuilderPage() {
           </span>
           <button
             onClick={handleNewProduct}
-            className="label-mono rounded-sm border border-sage px-3 py-1 text-[11px] hover:bg-sage/10"
+            className="label-mono rounded-sm border border-sage px-3 py-1 text-[13px] hover:bg-sage/10"
           >
             Build another
           </button>
@@ -258,13 +258,13 @@ export default function DigitalProductBuilderPage() {
 
       <div className="mt-10">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Digital products
           </h2>
           {products.length > 0 && (
             <button
               onClick={() => setConfirmDeleteAll(true)}
-              className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:border-gold hover:text-gold"
+              className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-gold hover:text-gold"
             >
               <Trash2 size={14} />
               Delete all products
@@ -294,14 +294,14 @@ export default function DigitalProductBuilderPage() {
                     <button
                       onClick={() => confirmDelete(s.id)}
                       disabled={deleteBusy}
-                      className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                      className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                     >
                       Delete
                     </button>
                     <button
                       onClick={() => setDeletingId(null)}
                       disabled={deleteBusy}
-                      className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                      className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -334,7 +334,7 @@ export default function DigitalProductBuilderPage() {
                             <FileText size={16} className="shrink-0 text-electric" />
                             <span className="truncate">{s.deliverable!.title}</span>
                           </div>
-                          <div className="mt-0.5 truncate text-[12px] text-paper-faint">
+                          <div className="mt-0.5 truncate text-[13px] text-paper-faint">
                             {s.clientLabel} · {s.asset.productType || "?"}
                           </div>
                         </div>
@@ -351,7 +351,7 @@ export default function DigitalProductBuilderPage() {
                         <button
                           onClick={() => postCover(s.id, { mode: "render" })}
                           disabled={busy}
-                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-50"
                         >
                           <ImageIcon size={14} />
                           {busy ? "Working…" : `${cover ? "Regenerate" : "Generate"} cover`}
@@ -360,14 +360,14 @@ export default function DigitalProductBuilderPage() {
                           <button
                             onClick={() => setAiOpenId(aiOpenId === s.id ? null : s.id)}
                             disabled={busy}
-                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-50"
                           >
                             <Sparkles size={14} />
                             AI background
                           </button>
                         )}
                         <label
-                          className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
+                          className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[13px] ${
                             busy ? "opacity-50" : ""
                           }`}
                         >
@@ -389,7 +389,7 @@ export default function DigitalProductBuilderPage() {
                           <button
                             onClick={() => postCover(s.id, { mode: "remove-bg" })}
                             disabled={busy}
-                            className="label-mono flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-gold hover:underline disabled:opacity-50"
+                            className="label-mono flex items-center gap-1.5 px-3 py-1.5 text-[13px] text-gold hover:underline disabled:opacity-50"
                           >
                             Remove background
                           </button>
@@ -402,7 +402,7 @@ export default function DigitalProductBuilderPage() {
                             target="_blank"
                             rel="noreferrer"
                             download
-                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                           >
                             <Download size={14} />
                             Download cover
@@ -412,7 +412,7 @@ export default function DigitalProductBuilderPage() {
                           href={viewHref}
                           target="_blank"
                           rel="noreferrer"
-                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                          className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                         >
                           <Download size={14} />
                           {isPdf ? "View" : "Download"}
@@ -428,14 +428,14 @@ export default function DigitalProductBuilderPage() {
                               setAiPromptBySession((m) => ({ ...m, [s.id]: e.target.value }))
                             }
                             placeholder="Optional: describe the background (e.g. 'warm sunrise gradient')"
-                            className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink-raised px-3 py-1.5 text-[12px] text-paper placeholder:text-paper-faint focus:border-electric focus:outline-none"
+                            className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink-raised px-3 py-1.5 text-[13px] text-paper placeholder:text-paper-faint focus:border-electric focus:outline-none"
                           />
                           <button
                             onClick={() =>
                               postCover(s.id, { mode: "ai", prompt: aiPromptBySession[s.id] })
                             }
                             disabled={busy}
-                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                            className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-50"
                           >
                             <Sparkles size={14} />
                             {busy ? "Generating…" : "Generate background"}
@@ -453,7 +453,7 @@ export default function DigitalProductBuilderPage() {
                             alt="Cover"
                             className="h-28 w-auto shrink-0 rounded-sm border border-line-strong"
                           />
-                          <div className="text-[12px] text-paper-faint">
+                          <div className="text-[13px] text-paper-faint">
                             {isPdf
                               ? "Added as page 1 of the PDF."
                               : "Standalone cover — download above."}
@@ -472,7 +472,7 @@ export default function DigitalProductBuilderPage() {
       {confirmDeleteAll && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4">
           <div className="hud-panel stack w-full max-w-sm border-l-[3px] border-gold p-5">
-            <h3 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h3 className="font-display text-base font-semibold text-paper">
               Delete all products?
             </h3>
             <p className="mt-2 text-sm text-paper-dim">
@@ -483,14 +483,14 @@ export default function DigitalProductBuilderPage() {
               <button
                 onClick={() => setConfirmDeleteAll(false)}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
               >
                 {deleteAllBusy ? "Deleting…" : "Delete all"}
               </button>

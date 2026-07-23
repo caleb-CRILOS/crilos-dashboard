@@ -272,7 +272,7 @@ export default function MessagingCreatorPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Megaphone size={14} />
         Build / Influence Building / Messaging Creator
       </div>
@@ -297,7 +297,7 @@ export default function MessagingCreatorPage() {
 
       {!started ? (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col items-center justify-center p-8 text-center">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Start a new piece of content
           </h2>
           <p className="mt-2 max-w-sm text-sm text-paper-dim">
@@ -307,7 +307,7 @@ export default function MessagingCreatorPage() {
 
           <button
             onClick={handleStart}
-            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[12px]"
+            className="label-mono mt-6 flex items-center gap-2 btn-accent px-4 py-2 text-[13px]"
           >
             <Play size={15} />
             Start Messaging Creator
@@ -316,10 +316,10 @@ export default function MessagingCreatorPage() {
       ) : (
         <div className="hud-panel hud-panel-magenta stack mt-6 flex h-[520px] flex-col">
           <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
-            <div className="label-mono text-[12px] text-paper-dim">{session?.clientLabel}</div>
+            <div className="label-mono text-[13px] text-paper-dim">{session?.clientLabel}</div>
             <button
               onClick={handleNewPiece}
-              className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+              className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
             >
               <Plus size={14} />
               New session
@@ -351,7 +351,7 @@ export default function MessagingCreatorPage() {
           </span>
           <button
             onClick={handleNewPiece}
-            className="label-mono rounded-sm border border-sage px-3 py-1 text-[11px] hover:bg-sage/10"
+            className="label-mono rounded-sm border border-sage px-3 py-1 text-[13px] hover:bg-sage/10"
           >
             Draft another
           </button>
@@ -359,7 +359,7 @@ export default function MessagingCreatorPage() {
       )}
 
       <div className="mt-10">
-        <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display text-lg font-semibold text-paper">
           Posting schedule
         </h2>
         <p className="mb-3 mt-1 text-sm text-paper-dim">
@@ -380,17 +380,17 @@ export default function MessagingCreatorPage() {
                   key={s.id}
                   className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-line-strong bg-ink px-4 py-2.5 text-sm"
                 >
-                  <span className="label-mono w-24 shrink-0 text-[12px] text-electric">
+                  <span className="label-mono w-24 shrink-0 text-[13px] text-electric">
                     {formatDate(day, "EEE MMM d")}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-paper-dim">
                     {s.piece.topic || s.deliverable?.title || "Untitled piece"}
                   </span>
-                  <span className="shrink-0 text-[12px] text-paper-faint">
+                  <span className="shrink-0 text-[13px] text-paper-faint">
                     {s.piece.format || "?"} / {s.piece.platform || "?"}
                   </span>
                   {overdue && (
-                    <span className="label-mono shrink-0 text-[11px] text-gold">Overdue</span>
+                    <span className="label-mono shrink-0 text-[13px] text-gold">Overdue</span>
                   )}
                 </div>
               );
@@ -401,13 +401,13 @@ export default function MessagingCreatorPage() {
 
       <div className="mt-10">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-paper">
+          <h2 className="font-display text-lg font-semibold text-paper">
             Deliverables
           </h2>
           {deliverables.length > 0 && (
             <button
               onClick={() => setConfirmDeleteAll(true)}
-              className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:border-gold hover:text-gold"
+              className="label-mono flex items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-gold hover:text-gold"
             >
               <Trash2 size={14} />
               Delete all pieces
@@ -461,14 +461,14 @@ export default function MessagingCreatorPage() {
                       <button
                         onClick={() => confirmDelete(s.id)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-gold px-3 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                       >
                         {deleteBusy ? "Deleting…" : "Delete"}
                       </button>
                       <button
                         onClick={() => setDeletingId(null)}
                         disabled={deleteBusy}
-                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                        className="label-mono rounded-sm border border-line-strong px-3 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -487,7 +487,7 @@ export default function MessagingCreatorPage() {
                       <FileText size={16} className="shrink-0 text-electric" />
                       <span className="truncate">{s.deliverable!.title}</span>
                     </div>
-                    <div className="mt-0.5 truncate text-[12px] text-paper-faint">
+                    <div className="mt-0.5 truncate text-[13px] text-paper-faint">
                       {s.clientLabel} · {s.piece.format || "?"} / {s.piece.platform || "?"}
                     </div>
                   </div>
@@ -497,7 +497,7 @@ export default function MessagingCreatorPage() {
                       <button
                         onClick={() => generateSlides(s.id)}
                         disabled={generatingId === s.id}
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-50"
                       >
                         <ImageIcon size={14} />
                         {generatingId === s.id
@@ -507,7 +507,7 @@ export default function MessagingCreatorPage() {
                     )}
                     {renderable && (
                       <label
-                        className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[11px] ${
+                        className={`chip-accent flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-[13px] ${
                           busyOnCard ? "opacity-50" : ""
                         }`}
                       >
@@ -533,7 +533,7 @@ export default function MessagingCreatorPage() {
                     {slides.length > 1 && (
                       <a
                         href={`/api/messaging/slides/zip?sessionId=${s.id}`}
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <Download size={14} />
                         All slides (.zip)
@@ -545,7 +545,7 @@ export default function MessagingCreatorPage() {
                         target="_blank"
                         rel="noreferrer"
                         download
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <Download size={14} />
                         Download image
@@ -553,7 +553,7 @@ export default function MessagingCreatorPage() {
                     )}
                     <button
                       onClick={() => copyToClipboard(captionForCopy(s), `caption-${s.id}`)}
-                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                     >
                       {copiedKey === `caption-${s.id}` ? (
                         <Check size={14} className="text-sage" />
@@ -566,7 +566,7 @@ export default function MessagingCreatorPage() {
                       <button
                         onClick={() => setOpenHooksId((id) => (id === s.id ? null : s.id))}
                         aria-expanded={openHooksId === s.id}
-                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                        className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                       >
                         <ChevronDown
                           size={14}
@@ -577,7 +577,7 @@ export default function MessagingCreatorPage() {
                     )}
                     <button
                       onClick={() => setSchedulingId((id) => (id === s.id ? null : s.id))}
-                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                     >
                       <CalendarDays size={14} />
                       {s.scheduledFor
@@ -588,7 +588,7 @@ export default function MessagingCreatorPage() {
                       href={`/api/messaging/deliverables/${s.deliverable!.fileName}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                     >
                       <Download size={14} />
                       View PDF
@@ -596,7 +596,7 @@ export default function MessagingCreatorPage() {
                     <button
                       onClick={() => setDeletingId(s.id)}
                       aria-label="Delete piece"
-                      className="chip-accent ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                      className="chip-accent ml-auto flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
                     >
                       <Trash2 size={14} />
                       Delete
@@ -605,12 +605,12 @@ export default function MessagingCreatorPage() {
 
                   {openHooksId === s.id && hooks.length > 0 && (
                     <div className="mt-3 space-y-1.5 border-l-[3px] border-line-strong pl-3">
-                      <div className="label-mono text-[11px] text-paper-faint">
+                      <div className="label-mono text-[13px] text-paper-faint">
                         Swap in for the caption&apos;s first line
                       </div>
                       {hooks.map((hook, i) => (
                         <div key={i} className="flex items-start gap-2">
-                          <span className="flex-1 text-[13px] text-paper-dim">{hook}</span>
+                          <span className="flex-1 text-sm text-paper-dim">{hook}</span>
                           <button
                             onClick={() => copyToClipboard(hook, `hook-${s.id}-${i}`)}
                             aria-label={`Copy hook ${i + 1}`}
@@ -636,10 +636,10 @@ export default function MessagingCreatorPage() {
                         onChange={(e) => {
                           if (e.target.value) setSchedule(s.id, e.target.value);
                         }}
-                        className="rounded-sm border border-line-strong bg-ink px-2 py-1 font-mono text-[12px] text-paper disabled:opacity-50"
+                        className="rounded-sm border border-line-strong bg-ink px-2 py-1 font-mono text-[13px] text-paper disabled:opacity-50"
                       />
                       {s.piece.suggestedPostAt && !s.scheduledFor && (
-                        <span className="text-[12px] text-paper-faint">
+                        <span className="text-[13px] text-paper-faint">
                           Atlas suggested {s.piece.suggestedPostAt}
                         </span>
                       )}
@@ -647,7 +647,7 @@ export default function MessagingCreatorPage() {
                         <button
                           onClick={() => setSchedule(s.id, null)}
                           disabled={scheduleBusyId === s.id}
-                          className="label-mono flex items-center gap-1 text-[11px] text-gold hover:underline disabled:opacity-50"
+                          className="label-mono flex items-center gap-1 text-[13px] text-gold hover:underline disabled:opacity-50"
                         >
                           <X size={13} />
                           Unschedule
@@ -665,7 +665,7 @@ export default function MessagingCreatorPage() {
                           setAiPromptBySession((m) => ({ ...m, [s.id]: e.target.value }))
                         }
                         placeholder="Describe the background image…"
-                        className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink px-2 py-1.5 text-[12px] text-paper placeholder:text-paper-faint"
+                        className="min-w-0 flex-1 rounded-sm border border-line-strong bg-ink px-2 py-1.5 text-[13px] text-paper placeholder:text-paper-faint"
                       />
                       <button
                         onClick={() =>
@@ -675,7 +675,7 @@ export default function MessagingCreatorPage() {
                           })
                         }
                         disabled={busyOnCard}
-                        className="chip-accent flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-[11px] disabled:opacity-50"
+                        className="chip-accent flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-[13px] disabled:opacity-50"
                       >
                         <Sparkles size={14} />
                         {bgBusy?.id === s.id && bgBusy.mode === "ai"
@@ -695,7 +695,7 @@ export default function MessagingCreatorPage() {
                         alt="Slide background"
                         className="h-16 w-16 shrink-0 rounded-sm border border-line-strong object-cover"
                       />
-                      <div className="text-[12px] text-paper-faint">
+                      <div className="text-[13px] text-paper-faint">
                         {s.slideImageKind === "ai" ? "Generated" : "Uploaded"} background —
                         regenerate to apply.
                         <button
@@ -743,7 +743,7 @@ export default function MessagingCreatorPage() {
       {confirmDeleteAll && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 px-4">
           <div className="hud-panel stack w-full max-w-sm border-l-[3px] border-gold p-5">
-            <h3 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h3 className="font-display text-base font-semibold text-paper">
               Delete all pieces?
             </h3>
             <p className="mt-2 text-sm text-paper-dim">
@@ -756,14 +756,14 @@ export default function MessagingCreatorPage() {
               <button
                 onClick={() => setConfirmDeleteAll(false)}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAll}
                 disabled={deleteAllBusy}
-                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                className="label-mono rounded-sm border border-gold px-3 py-1.5 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
               >
                 {deleteAllBusy ? "Deleting…" : "Delete all"}
               </button>

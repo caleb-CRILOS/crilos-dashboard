@@ -1,22 +1,13 @@
 import { HealthStatus } from "@/lib/types";
 
-// Fork of HealthBadge.tsx scoped to DM 2 Close lead health -- literal
-// green/yellow/red filled chips instead of KORE's monochrome+blue
-// escalation. See src/app/globals.css for the --dm-health-* tokens.
-// text/dot use --ink (the surface color) rather than --signal-fg so the
-// chip stays readable when a theme inverts polarity: in light themes --ink
-// is a light tint (light text on the dark health fill), in Noir --ink is
-// dark (dark text on the brightened health fill).
-const styles: Record<HealthStatus, string> = {
-  green: "border-dm-health-green bg-dm-health-green text-ink",
-  yellow: "border-dm-health-yellow bg-dm-health-yellow text-ink",
-  red: "border-dm-health-red bg-dm-health-red text-ink",
-};
-
+// Fork of HealthBadge.tsx scoped to DM 2 Close lead health. Both now render
+// the same neutral pill with a colored status dot; this stays a separate
+// component so the two can diverge again if DM 2 Close needs a louder
+// treatment. See src/app/globals.css for the --dm-health-* tokens.
 const dotStyles: Record<HealthStatus, string> = {
-  green: "bg-ink",
-  yellow: "bg-ink",
-  red: "bg-ink",
+  green: "bg-dm-health-green",
+  yellow: "bg-dm-health-yellow",
+  red: "bg-dm-health-red",
 };
 
 const labels: Record<HealthStatus, string> = {
@@ -27,10 +18,11 @@ const labels: Record<HealthStatus, string> = {
 
 export default function DmHealthBadge({ status }: { status: HealthStatus }) {
   return (
-    <span
-      className={`label-mono inline-flex items-center gap-1.5 border px-2.5 py-0.5 text-[11px] ${styles[status]}`}
-    >
-      <span className={`h-1.5 w-1.5 ${dotStyles[status]}`} aria-hidden="true" />
+    <span className="label-mono inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[13px] text-paper-dim">
+      <span
+        className={`h-2 w-2 rounded-full ${dotStyles[status]}`}
+        aria-hidden="true"
+      />
       {labels[status]}
     </span>
   );

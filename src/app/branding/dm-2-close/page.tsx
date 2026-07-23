@@ -93,7 +93,7 @@ export default function Dm2ClosePage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Palette size={14} />
         Build / Sales Conversion / DM 2 Close
       </div>
@@ -117,7 +117,7 @@ export default function Dm2ClosePage() {
       {view === "list" ? (
         <div className="mt-6">
           <div className="hud-panel hud-panel-magenta stack p-5">
-            <h2 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display text-base font-semibold text-paper">
               Start a new lead conversation
             </h2>
             <p className="mt-1 text-sm text-paper-dim">
@@ -141,7 +141,7 @@ export default function Dm2ClosePage() {
               <button
                 onClick={handleStartNewLead}
                 disabled={loading || !newLeadLabel.trim()}
-                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[12px] disabled:opacity-40"
+                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[13px] disabled:opacity-40"
               >
                 <Plus size={15} />
                 Start
@@ -150,7 +150,7 @@ export default function Dm2ClosePage() {
           </div>
 
           <div className="mt-6">
-            <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display mb-3 text-lg font-semibold text-paper">
               Lead conversations
             </h2>
             {allSessions.length === 0 ? (
@@ -176,7 +176,7 @@ export default function Dm2ClosePage() {
                           <button
                             onClick={() => confirmDelete(s.id, true)}
                             disabled={deleteBusy}
-                            className="label-mono flex items-center gap-1 rounded-sm border border-sage px-2.5 py-1 text-[11px] text-sage hover:bg-sage/10 disabled:opacity-50"
+                            className="label-mono flex items-center gap-1 rounded-sm border border-sage px-2.5 py-1 text-[13px] text-sage hover:bg-sage/10 disabled:opacity-50"
                           >
                             <Check size={13} />
                             Yes
@@ -184,7 +184,7 @@ export default function Dm2ClosePage() {
                           <button
                             onClick={() => confirmDelete(s.id, false)}
                             disabled={deleteBusy}
-                            className="label-mono flex items-center gap-1 rounded-sm border border-paper px-2.5 py-1 text-[11px] text-paper hover:bg-ink-elevated disabled:opacity-50"
+                            className="label-mono flex items-center gap-1 rounded-sm border border-line-strong px-2.5 py-1 text-[13px] text-paper hover:bg-ink-elevated disabled:opacity-50"
                           >
                             <X size={13} />
                             No
@@ -192,7 +192,7 @@ export default function Dm2ClosePage() {
                           <button
                             onClick={() => setDeletingId(null)}
                             disabled={deleteBusy}
-                            className="label-mono rounded-sm border border-line-strong px-2.5 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-line-strong px-2.5 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                           >
                             Cancel
                           </button>
@@ -214,7 +214,7 @@ export default function Dm2ClosePage() {
                         <span className="flex items-center gap-2">
                           {health && <DmHealthBadge status={health} />}
                           {s.currentStage && (
-                            <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[11px] text-paper-dim">
+                            <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[13px] text-paper-dim">
                               {s.currentStage}
                             </span>
                           )}
@@ -239,14 +239,14 @@ export default function Dm2ClosePage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={backToList}
-                className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
               >
                 <ArrowLeft size={14} />
                 All lead conversations
               </button>
               <button
                 onClick={handleNewSession}
-                className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
               >
                 <Plus size={14} />
                 New session
@@ -256,7 +256,7 @@ export default function Dm2ClosePage() {
               {session?.leadLabel}
               {currentHealth && <DmHealthBadge status={currentHealth} />}
               {session?.currentStage && (
-                <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[11px] text-paper-dim">
+                <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[13px] text-paper-dim">
                   {session.currentStage}
                 </span>
               )}

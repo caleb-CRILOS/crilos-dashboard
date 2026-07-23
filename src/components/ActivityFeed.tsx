@@ -27,7 +27,7 @@ export default function ActivityFeed({ items }: { items: ActivityItem[] }) {
           <div className="flex items-center gap-3 px-4 py-3">
             <Icon size={16} className="shrink-0 text-paper" />
             <div className="min-w-0 flex-1">
-              <div className="label-mono text-[10px] text-paper-faint">
+              <div className="label-mono text-xs text-paper-faint">
                 {item.agentName} · {item.label}
               </div>
               <div className="truncate text-xs text-paper-dim">{item.summary}</div>

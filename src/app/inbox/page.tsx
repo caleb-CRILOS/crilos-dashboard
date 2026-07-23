@@ -143,7 +143,7 @@ export default function InboxPage() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Inbox size={14} />
         Operate / Inbox
       </div>
@@ -161,7 +161,7 @@ export default function InboxPage() {
                 review and save as a Gmail draft yourself.
               </p>
               {watcherStatus?.enabled && (
-                <p className="label-mono mt-1 text-[11px] text-paper-faint">
+                <p className="label-mono mt-1 text-[13px] text-paper-faint">
                   Auto-checks every 90 min
                   {watcherStatus.lastCheckedAt && ` · last checked ${timeAgo(watcherStatus.lastCheckedAt)}`}
                 </p>
@@ -170,7 +170,7 @@ export default function InboxPage() {
             <button
               onClick={loadThreads}
               disabled={loading}
-              className="label-mono flex shrink-0 items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
+              className="label-mono flex shrink-0 items-center gap-1.5 rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
             >
               <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
               Refresh
@@ -219,7 +219,7 @@ export default function InboxPage() {
                   <div className="mt-0.5 text-xs text-paper-dim">
                     {t.from}
                     {t.clientLabel && (
-                      <span className="label-mono ml-2 rounded-sm border border-line-strong px-2 py-0.5 text-[11px] text-paper-dim">
+                      <span className="label-mono ml-2 rounded-sm border border-line-strong px-2 py-0.5 text-[13px] text-paper-dim">
                         {t.clientLabel}
                       </span>
                     )}
@@ -233,7 +233,7 @@ export default function InboxPage() {
                     <button
                       onClick={() => processThread(t.threadId)}
                       disabled={rowBusy}
-                      className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[12px] disabled:opacity-50"
+                      className="label-mono flex items-center gap-1.5 btn-accent px-3 py-1.5 text-[13px] disabled:opacity-50"
                     >
                       <Sparkles size={14} />
                       {isProcessing ? "Working…" : "Summarize & draft"}
@@ -252,7 +252,7 @@ export default function InboxPage() {
                     onClick={() => deleteThread(t.threadId)}
                     disabled={rowBusy}
                     title="Delete"
-                    className="flex items-center gap-1.5 rounded-sm border border-line-strong px-2.5 py-1.5 text-xs text-paper-dim hover:border-paper hover:text-paper disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-sm border border-line-strong px-2.5 py-1.5 text-xs text-paper-dim hover:border-clay hover:text-signal-ink disabled:opacity-50"
                   >
                     <Trash2 size={14} />
                     {isDeleting ? "…" : ""}
@@ -263,14 +263,14 @@ export default function InboxPage() {
               {session && (
                 <div className="mt-3 space-y-3 border-t border-line pt-3">
                   <div>
-                    <div className="label-mono mb-1 text-[11px] text-paper-faint">Summary</div>
+                    <div className="label-mono mb-1 text-[13px] text-paper-faint">Summary</div>
                     <p className="text-sm text-paper-dim">{session.summary}</p>
                   </div>
                   <div>
                     <div className="mb-1 flex items-center justify-between">
-                      <span className="label-mono text-[11px] text-paper-faint">Draft reply</span>
+                      <span className="label-mono text-[13px] text-paper-faint">Draft reply</span>
                       {session.status === "saved" && (
-                        <span className="label-mono flex items-center gap-1 text-[11px] text-sage">
+                        <span className="label-mono flex items-center gap-1 text-[13px] text-sage">
                           <CheckCircle2 size={13} />
                           Saved to Gmail Drafts
                         </span>
@@ -289,14 +289,14 @@ export default function InboxPage() {
                     <button
                       onClick={() => processThread(t.threadId)}
                       disabled={isProcessing}
-                      className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[12px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
+                      className="label-mono rounded-sm border border-line-strong px-3 py-1.5 text-[13px] text-paper-dim hover:border-electric hover:text-paper disabled:opacity-50"
                     >
                       {isProcessing ? "Regenerating…" : "Regenerate"}
                     </button>
                     <button
                       onClick={() => saveDraft(t.threadId)}
                       disabled={isSaving}
-                      className="label-mono btn-accent px-3 py-1.5 text-[12px] disabled:opacity-50"
+                      className="label-mono btn-accent px-3 py-1.5 text-[13px] disabled:opacity-50"
                     >
                       {isSaving ? "Saving…" : "Save as Gmail draft"}
                     </button>

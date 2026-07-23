@@ -2,16 +2,21 @@
 // keys used across the Settings picker, the Settings type, and the root
 // layout (which stamps `data-theme` on <html>).
 //
-// The actual re-skinning lives in globals.css: each key (except the
-// default `kore`, which is the `:root` palette) has a `[data-theme="…"]`
-// block that overrides the name-stable color variables. The `chips` here
-// are ONLY the small preview swatches shown in the Settings picker
-// (surface / text / accent) — they mirror three representative values
-// from each CSS block. Fonts and structure never change between themes.
+// The actual re-skinning lives in globals.css: `light` is the `:root`
+// palette and `dark` has a `[data-theme="dark"]` block overriding the
+// name-stable color variables. The `chips` here are ONLY the small
+// preview swatches shown in the Settings picker (surface / text /
+// accent) — they mirror three representative values from each CSS
+// block. Fonts, radius, and shape never change between themes.
+//
+// Note the root layout validates with `isThemeName()` rather than
+// defaulting, so a value persisted by an older build (e.g. "kore",
+// "noir", "slate", "rosette") degrades to DEFAULT_THEME instead of
+// stamping a data-theme with no matching CSS block.
 
-export type ThemeName = "kore" | "noir" | "light" | "slate" | "rosette";
+export type ThemeName = "light" | "dark";
 
-export const DEFAULT_THEME: ThemeName = "kore";
+export const DEFAULT_THEME: ThemeName = "light";
 
 export type ThemeMeta = {
   key: ThemeName;
@@ -23,34 +28,16 @@ export type ThemeMeta = {
 
 export const THEMES: ThemeMeta[] = [
   {
-    key: "kore",
-    label: "KORE",
-    blurb: "Bone substrate, ink geometry, one signal blue.",
-    chips: ["#e7e3d6", "#111110", "#0c77c2"],
-  },
-  {
-    key: "noir",
-    label: "Noir",
-    blurb: "Dark inversion — charcoal sheet, bone type, warm yellow.",
-    chips: ["#17160f", "#e8e4d7", "#f2c14e"],
-  },
-  {
     key: "light",
     label: "Light",
-    blurb: "Cool bright sheet, ink type, scarlet accent.",
-    chips: ["#f4f6f7", "#14181d", "#e63946"],
+    blurb: "White cards on a cool near-white canvas, signal blue accent.",
+    chips: ["#f4f7fb", "#101725", "#0c77c2"],
   },
   {
-    key: "slate",
-    label: "Slate",
-    blurb: "Cool — pale blue-gray paper, navy ink, steel accent.",
-    chips: ["#e3e6ea", "#14181d", "#3f6b8c"],
-  },
-  {
-    key: "rosette",
-    label: "Rosette",
-    blurb: "Soft — blush sheet, deep plum ink, rose accent.",
-    chips: ["#f3e7ea", "#2a1620", "#c13e7a"],
+    key: "dark",
+    label: "Dark",
+    blurb: "Deep slate surfaces, bright type, the same signal blue.",
+    chips: ["#0d1117", "#e6edf5", "#2b8fdb"],
   },
 ];
 

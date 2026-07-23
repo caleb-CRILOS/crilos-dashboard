@@ -13,6 +13,7 @@ import { JSONFilePreset } from "lowdb/node";
 import path from "path";
 import fs from "fs";
 import { DbSchema } from "./types";
+import { DEFAULT_THEME } from "./themes";
 
 const DB_PATH = path.join(process.cwd(), "data", "db.json");
 
@@ -45,7 +46,7 @@ const defaultData: DbSchema = {
   revenueSnapshots: [],
   settings: {
     healthThresholds: { yellowDays: 7, redDays: 14 },
-    theme: "kore",
+    theme: DEFAULT_THEME,
     memberAuth: null,
   },
   insights: [],

@@ -28,21 +28,16 @@ export default function QuitButton() {
   if (stopped) {
     return (
       <div className="fixed inset-0 z-50 flex min-h-screen items-center justify-center bg-ink p-6">
-        <div className="sheet stack relative w-full max-w-md p-8 md:p-10">
-          <span className="corner tl acid" aria-hidden="true" />
-          <span className="corner tr" aria-hidden="true" />
-          <span className="corner bl" aria-hidden="true" />
-          <span className="corner br acid" aria-hidden="true" />
-
-          <div className="label-mono text-[11px] text-signal-ink">
-            § DASHBOARD STOPPED
+        <div className="hud-panel stack relative w-full max-w-md p-8 md:p-10">
+          <div className="label-mono text-sm text-signal-ink">
+            Dashboard stopped
           </div>
           <h1 className="bleed-type mt-3">CRILOS</h1>
           <p className="mt-4 text-sm leading-relaxed text-paper-dim">
             The local server has shut down and port 3000 is free. You can close
             this tab now.
           </p>
-          <div className="callout mt-6 text-[13px] leading-relaxed text-paper">
+          <div className="callout mt-6 text-sm leading-relaxed text-paper">
             <span className="cross" aria-hidden="true">
               +
             </span>
@@ -62,7 +57,7 @@ export default function QuitButton() {
     <button
       type="button"
       onClick={quit}
-      className="label-mono text-[10px] text-paper-faint transition-colors hover:text-paper"
+      className="label-mono text-xs text-paper-faint transition-colors hover:text-paper"
     >
       Sign out &amp; quit
     </button>

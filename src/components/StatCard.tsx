@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-// tone "ink" = default (Space Grotesk ink number on a bone2 plate).
+// tone "ink" = default (dark number on a white card).
 // tone "accent" = the ONE blue Data panel per view (Signal fill). Never
 // more than one.
 export default function StatCard({
@@ -26,13 +26,15 @@ export default function StatCard({
     );
   }
   return (
-    <div className="stack border border-line-strong bg-ink-raised p-5">
+    <div className="hud-panel stack p-5">
       <div className="flex items-center justify-between">
-        <span className="label-mono text-[12px] text-paper-faint">{label}</span>
+        <span className="label-mono text-[13px] text-paper-faint">{label}</span>
         {icon}
       </div>
-      <div className="mt-2 font-display text-4xl font-bold tabular-nums text-paper">{value}</div>
-      {sub && <div className="label-mono mt-1 text-[11px] text-paper-faint">{sub}</div>}
+      <div className="mt-2 font-display text-4xl font-semibold tabular-nums text-paper">
+        {value}
+      </div>
+      {sub && <div className="label-mono mt-1 text-[13px] text-paper-faint">{sub}</div>}
     </div>
   );
 }

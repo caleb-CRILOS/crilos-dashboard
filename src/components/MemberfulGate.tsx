@@ -24,14 +24,9 @@ export default function MemberfulGate({
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6">
-      <div className="sheet stack relative w-full max-w-md p-8 md:p-10">
-        <span className="corner tl acid" aria-hidden="true" />
-        <span className="corner tr" aria-hidden="true" />
-        <span className="corner bl" aria-hidden="true" />
-        <span className="corner br acid" aria-hidden="true" />
-
-        <div className="label-mono text-[11px] text-signal-ink">
-          § MEMBERS ONLY
+      <div className="hud-panel stack relative w-full max-w-md p-8 md:p-10">
+        <div className="label-mono text-sm text-signal-ink">
+          Members only
         </div>
         <h1 className="bleed-type mt-3">CRILOS</h1>
         <p className="mt-4 text-sm leading-relaxed text-paper-dim">
@@ -40,7 +35,7 @@ export default function MemberfulGate({
         </p>
 
         {notice && (
-          <div className="callout mt-6 text-[13px] leading-relaxed text-paper">
+          <div className="callout mt-6 text-sm leading-relaxed text-paper">
             <span className="cross" aria-hidden="true">
               +
             </span>
@@ -51,12 +46,12 @@ export default function MemberfulGate({
         {configured ? (
           <a
             href="/api/auth/memberful/start"
-            className="btn-accent stack-sm mt-8 flex w-full items-center justify-center px-5 py-3 text-[13px]"
+            className="btn-accent stack-sm mt-8 flex w-full items-center justify-center px-5 py-3 text-sm"
           >
             Sign in with Memberful
           </a>
         ) : (
-          <div className="callout mt-8 text-[13px] leading-relaxed text-paper">
+          <div className="callout mt-8 text-sm leading-relaxed text-paper">
             <span className="cross" aria-hidden="true">
               +
             </span>
@@ -79,7 +74,7 @@ export default function MemberfulGate({
             href={joinUrl}
             target="_blank"
             rel="noreferrer"
-            className="btn-ghost mt-4 flex w-full items-center justify-center px-5 py-3 text-[12px]"
+            className="btn-ghost mt-4 flex w-full items-center justify-center px-5 py-3 text-[13px]"
           >
             Join the community
           </a>

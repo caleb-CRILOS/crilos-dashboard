@@ -140,7 +140,7 @@ export default function DiscoveryCallPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Palette size={14} />
         Build / Sales Conversion / Discovery Call
       </div>
@@ -162,7 +162,7 @@ export default function DiscoveryCallPage() {
       {view === "list" ? (
         <div className="mt-6">
           <div className="hud-panel hud-panel-magenta stack p-5">
-            <h2 className="font-display text-base font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display text-base font-semibold text-paper">
               Start a new Discovery Call Lead
             </h2>
             <p className="mt-1 text-sm text-paper-dim">
@@ -186,7 +186,7 @@ export default function DiscoveryCallPage() {
               <button
                 onClick={handleStartNewLead}
                 disabled={loading || !newLeadLabel.trim()}
-                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[12px] disabled:opacity-40"
+                className="label-mono flex items-center gap-1.5 btn-accent px-3 py-2 text-[13px] disabled:opacity-40"
               >
                 <Plus size={15} />
                 Start
@@ -195,7 +195,7 @@ export default function DiscoveryCallPage() {
           </div>
 
           <div className="mt-6">
-            <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+            <h2 className="font-display mb-3 text-lg font-semibold text-paper">
               Lead Conversion
             </h2>
             {allSessions.length === 0 ? (
@@ -220,14 +220,14 @@ export default function DiscoveryCallPage() {
                           <button
                             onClick={() => confirmDelete(s.id)}
                             disabled={deleteBusy}
-                            className="label-mono rounded-sm border border-gold px-2.5 py-1 text-[11px] text-gold hover:bg-gold/10 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-gold px-2.5 py-1 text-[13px] text-gold hover:bg-gold/10 disabled:opacity-50"
                           >
                             Delete
                           </button>
                           <button
                             onClick={() => setDeletingId(null)}
                             disabled={deleteBusy}
-                            className="label-mono rounded-sm border border-line-strong px-2.5 py-1 text-[11px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
+                            className="label-mono rounded-sm border border-line-strong px-2.5 py-1 text-[13px] text-paper-dim hover:bg-paper/5 disabled:opacity-50"
                           >
                             Cancel
                           </button>
@@ -249,7 +249,7 @@ export default function DiscoveryCallPage() {
                         <span className="flex items-center gap-2">
                           {health && <DmHealthBadge status={health} />}
                           {s.stage && (
-                            <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[11px] text-paper-dim">
+                            <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[13px] text-paper-dim">
                               {STAGE_LABELS[s.stage] ?? s.stage}
                             </span>
                           )}
@@ -286,14 +286,14 @@ export default function DiscoveryCallPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={backToList}
-                  className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                  className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
                 >
                   <ArrowLeft size={14} />
                   All Discovery Call leads
                 </button>
                 <button
                   onClick={handleNewSession}
-                  className="label-mono flex items-center gap-1.5 text-[12px] text-paper-dim hover:text-paper"
+                  className="label-mono flex items-center gap-1.5 text-[13px] text-paper-dim hover:text-paper"
                 >
                   <Plus size={14} />
                   New session
@@ -303,7 +303,7 @@ export default function DiscoveryCallPage() {
                 {session?.leadLabel}
                 {sessionHealth && <DmHealthBadge status={sessionHealth} />}
                 {session?.stage && (
-                  <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[11px] text-paper-dim">
+                  <span className="label-mono rounded-sm border border-line-strong px-2 py-0.5 text-[13px] text-paper-dim">
                     {STAGE_LABELS[session.stage] ?? session.stage}
                   </span>
                 )}
@@ -311,7 +311,7 @@ export default function DiscoveryCallPage() {
                   <button
                     onClick={markCallCompleted}
                     disabled={markCompletedBusy}
-                    className="label-mono flex items-center gap-1 rounded-sm border border-sage px-2 py-0.5 text-[11px] text-sage hover:bg-sage/10 disabled:opacity-50"
+                    className="label-mono flex items-center gap-1 rounded-sm border border-sage px-2 py-0.5 text-[13px] text-sage hover:bg-sage/10 disabled:opacity-50"
                   >
                     <Check size={12} />
                     Mark call completed
@@ -350,7 +350,7 @@ export default function DiscoveryCallPage() {
                 href={`/api/hawk/deliverables/${session.deliverable.fileName}`}
                 target="_blank"
                 rel="noreferrer"
-                className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[11px]"
+                className="chip-accent flex items-center gap-1.5 px-3 py-1.5 text-[13px]"
               >
                 <Download size={14} />
                 View PDF

@@ -37,7 +37,7 @@ export default function ToolShell({
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <Icon size={14} />
         {eyebrow}
       </div>
@@ -49,7 +49,7 @@ export default function ToolShell({
       <div className="hud-panel hud-panel-magenta stack mt-8 space-y-4 p-5">
         {fields.map((field) => (
           <div key={field.name}>
-            <label className="label-mono mb-1 block text-[11px] text-paper-dim">
+            <label className="label-mono mb-1 block text-[13px] text-paper-dim">
               {field.label}
             </label>
             {field.type === "textarea" ? (
@@ -96,7 +96,7 @@ export default function ToolShell({
         <div className="flex items-center gap-3 pt-1">
           <button
             onClick={run}
-            className="label-mono btn-accent px-4 py-2 text-[12px]"
+            className="label-mono btn-accent px-4 py-2 text-[13px]"
           >
             {actionLabel}
           </button>
@@ -105,7 +105,7 @@ export default function ToolShell({
       </div>
 
       <div className="mt-10">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display mb-3 text-lg font-semibold text-paper">
           Recent runs
         </h2>
         <div className="hud-panel stack p-8 text-center text-sm text-paper-faint">

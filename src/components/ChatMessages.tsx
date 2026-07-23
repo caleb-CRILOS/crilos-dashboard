@@ -4,7 +4,7 @@ import { ChatMessage } from "@/lib/types";
 
 function PersonaTag({ name }: { name: string }) {
   return (
-    <div className="label-mono mb-1 flex items-center gap-1.5 text-[11px] text-signal-ink">
+    <div className="label-mono mb-1 flex items-center gap-1.5 text-[13px] text-signal-ink">
       <span className="h-1.5 w-1.5 bg-clay" aria-hidden="true" />
       {name}
     </div>
@@ -47,7 +47,7 @@ export default function ChatMessages({
                   href={`${uploadsBasePath ?? "/api/steward/uploads"}/${m.attachment.fileName}?download=1`}
                   target="_blank"
                   rel="noreferrer"
-                  className="label-mono mb-1.5 flex w-fit items-center gap-1.5 border border-line-strong bg-ink px-2 py-1 text-[11px] text-paper-dim hover:border-electric hover:text-paper"
+                  className="label-mono mb-1.5 flex w-fit items-center gap-1.5 border border-line-strong bg-ink px-2 py-1 text-[13px] text-paper-dim hover:border-electric hover:text-paper"
                 >
                   <Paperclip size={12} />
                   {m.attachment.title}

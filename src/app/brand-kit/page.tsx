@@ -73,7 +73,7 @@ export default function BrandKitPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="label-mono mb-2 flex items-center gap-2 text-[12px] text-electric">
+      <div className="label-mono mb-2 flex items-center gap-2 text-[13px] text-electric">
         <SwatchBook size={14} />
         Operate / Branding
       </div>
@@ -96,7 +96,7 @@ export default function BrandKitPage() {
       <div className="hud-panel hud-panel-magenta stack mt-8 p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <div className="label-mono text-[11px] text-paper-dim">
+            <div className="label-mono text-[13px] text-paper-dim">
               {standard ? "Replace brand image" : "Brand image"}
             </div>
             <p className="mt-1 text-xs text-paper-faint">
@@ -104,7 +104,7 @@ export default function BrandKitPage() {
               {standard && " Generating a new one replaces the current standard."}
             </p>
           </div>
-          <label className="label-mono flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-sm border border-line-strong px-3 py-2 text-[12px] text-paper-dim hover:border-electric hover:text-paper">
+          <label className="label-mono flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-sm border border-line-strong px-3 py-2 text-[13px] text-paper-dim hover:border-electric hover:text-paper">
             <Upload size={14} />
             {generating ? "Generating…" : standard ? "Upload new" : "Upload image"}
             <input
@@ -130,7 +130,7 @@ export default function BrandKitPage() {
 
       {/* Active standard */}
       <div className="mt-10">
-        <h2 className="font-display mb-3 text-lg font-bold uppercase tracking-wide text-paper">
+        <h2 className="font-display mb-3 text-lg font-semibold text-paper">
           Active standard
         </h2>
 
@@ -153,7 +153,7 @@ export default function BrandKitPage() {
                 />
                 <div>
                   <div className="text-sm text-paper">{standard.title}</div>
-                  <div className="label-mono mt-0.5 text-[11px] text-paper-faint">
+                  <div className="label-mono mt-0.5 text-[13px] text-paper-faint">
                     Generated {new Date(standard.createdAt).toLocaleString()}
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export default function BrandKitPage() {
                       className="h-3.5 w-3.5 rounded-[2px] border border-line-strong"
                       style={{ backgroundColor: hex }}
                     />
-                    <span className="label-mono text-[11px] text-paper-dim">{hex}</span>
+                    <span className="label-mono text-[13px] text-paper-dim">{hex}</span>
                   </div>
                 ))}
             </div>
