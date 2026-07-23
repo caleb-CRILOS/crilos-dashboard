@@ -13,6 +13,12 @@ import { generateDeliverable } from "@/lib/pdf/generate";
 
 const KICKOFF_MESSAGE = "Begin the onboarding conversation now, following your instructions.";
 
+// A redo of an already-completed stage. Sent explicitly rather than relying on
+// the isKickoff check below -- that only fires on an empty history, and a redo
+// deliberately keeps the previous transcript.
+const REVISE_KICKOFF_MESSAGE =
+  "The client is revisiting this stage to update what's on file. Greet them back and begin the review now, following your instructions.";
+
 const VOICE_FIELD_NAMES = new Set([
   "toneDescriptors",
   "energyLevel",
@@ -65,19 +71,37 @@ function schemaFor(stage: OnboardingStage) {
   return contentBibleSchema;
 }
 
-function systemPromptFor(session: OnboardingSession, stage: OnboardingStage): string {
-  if (stage === "setup") return buildSetupSystemPrompt();
-  if (stage === "ica") return buildIcaSystemPrompt(session.profile);
-  return buildContentBibleSystemPrompt(session.profile, session.voice, session.ica);
+// `revising` switches each stage into review mode: the same interview, but
+// opened with the answers already on file and driven by "what's changed?".
+function systemPromptFor(
+  session: OnboardingSession,
+  stage: OnboardingStage,
+  revising: boolean,
+): string {
+  if (stage === "setup") {
+    return buildSetupSystemPrompt(
+      revising ? { profile: session.profile, voice: session.voice } : undefined,
+    );
+  }
+  if (stage === "ica") {
+    return buildIcaSystemPrompt(session.profile, revising ? session.ica : undefined);
+  }
+  return buildContentBibleSystemPrompt(
+    session.profile,
+    session.voice,
+    session.ica,
+    revising ? session.contentBible : undefined,
+  );
 }
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { sessionId, stage, message, clientId } = body as {
+  const { sessionId, stage, message, clientId, intent } = body as {
     sessionId?: string;
     stage: OnboardingStage;
     message?: string;
     clientId?: string;
+    intent?: "revise";
   };
 
   const db = await getDb();
@@ -97,10 +121,29 @@ export async function POST(req: Request) {
   session.stage = stage;
   const history = messagesFor(session, stage);
   const userText = (message ?? "").trim();
-  const isKickoff = userText.length === 0 && history.length === 0;
-  const prompt = isKickoff ? KICKOFF_MESSAGE : userText;
 
-  if (!isKickoff) {
+  // Starting a redo: drop only the stage's CLI session id so the next turn
+  // opens a fresh conversation against the revise prompt. The transcript stays
+  // (the new exchange appends to it) and the stage stays marked complete --
+  // an abandoned redo must not downgrade a stage whose data is still good.
+  const startingRevision = intent === "revise";
+  if (startingRevision) {
+    session.claudeSessionIds[stage] = undefined;
+    session.revisingStages = { ...session.revisingStages, [stage]: true };
+  }
+  // Stays true for every turn of the redo, not just the one that opened it --
+  // each CLI call is handed a fresh system prompt, so dropping this on turn 2
+  // would put Atlas back on the first-contact script mid-revision.
+  const revising = !!session.revisingStages?.[stage];
+
+  const isKickoff = userText.length === 0 && history.length === 0;
+  const prompt = startingRevision
+    ? REVISE_KICKOFF_MESSAGE
+    : isKickoff
+      ? KICKOFF_MESSAGE
+      : userText;
+
+  if (!isKickoff && !startingRevision) {
     history.push({ role: "user", content: userText });
   }
 
@@ -110,7 +153,7 @@ export async function POST(req: Request) {
   try {
     const turn = await sendTurn({
       prompt,
-      systemPrompt: systemPromptFor(session, stage),
+      systemPrompt: systemPromptFor(session, stage, revising),
       resumeSessionId: session.claudeSessionIds[stage],
       model: anthropicModel,
     });
@@ -181,6 +224,16 @@ function applyStageResult(
   } else {
     session.contentBible = { ...session.contentBible, ...input };
     session.contentBibleComplete = true;
+  }
+
+  // Stamp the finish so the UI can spot a later stage built on answers that a
+  // redo has since changed, and close out any redo that was in flight.
+  session.stageCompletedAt = {
+    ...session.stageCompletedAt,
+    [stage]: new Date().toISOString(),
+  };
+  if (session.revisingStages?.[stage]) {
+    session.revisingStages = { ...session.revisingStages, [stage]: false };
   }
 }
 

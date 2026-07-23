@@ -5,7 +5,8 @@
 // STAGE_COMPLETE sentinel instead), no subagent delegation (Echo's logic is
 // folded inline), no PDF/status-log steps.
 
-import { IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { ContentBible, IcaProfile, OnboardingProfile, VoiceProfile } from "../types";
+import { fieldOrNone } from "../agentContext";
 import { ATLAS_INTERVIEW_TONE } from "../agents/atlasPersona";
 
 // Every stage prompt ends by telling the model to emit this exact token
@@ -18,10 +19,41 @@ export const STAGE_COMPLETE_SENTINEL = "[[STAGE_COMPLETE]]";
 
 const SHARED_TONE = ATLAS_INTERVIEW_TONE;
 
-export function buildSetupSystemPrompt(): string {
-  return `${SHARED_TONE}
+// Every stage can also run in REVISE mode -- the client has already completed
+// it once and is coming back to update what's on file (a new offer, a sharper
+// ICA, a changed price). The interview body below stays the same either way;
+// what changes is that the current answers are shown up front and the job
+// becomes "what's different now?" rather than "tell me from scratch". Passing
+// the stage's current values to a builder switches it into this mode.
+const REVISE_INSTRUCTION = `## You are UPDATING, not starting over
 
-You are running the first onboarding conversation for a brand-new client of
+This client completed this stage before -- their current answers are shown
+below. You are not meeting them for the first time and you must not run the
+first-time welcome.
+
+Work through the same areas as a first run, but as a review:
+- Lead with what's already on file for the area, in your own words, and ask
+  what's changed rather than asking the question cold.
+- When they confirm something still holds, say so briefly and move straight
+  on. Don't re-interview them on settled ground -- speed is the point of a
+  revision.
+- Only dig in properly where something has actually changed, or where the
+  current answer is thin or missing.
+- If they say up front that only one specific thing changed, go straight
+  there, confirm the rest in a single summary, and wrap up.
+
+When you finalize, restate every field -- including the ones that didn't
+change -- so nothing already captured gets dropped.`;
+
+function reviseBlock(currentValues: string): string {
+  return `${REVISE_INSTRUCTION}
+
+## Currently on file for this stage
+
+${currentValues}`;
+}
+
+const SETUP_FIRST_CONTACT_OPENING = `You are running the first onboarding conversation for a brand-new client of
 CRILOS — an AI-powered ops stack for coaches and consultants. This is
 their first interaction with you.
 
@@ -41,7 +73,57 @@ time, keep a bit of light humor. Hit these points in your own words:
 
 If they respond with anything other than a clear yes, have a real
 conversation with them first — don't force it back on track immediately.
-When it feels natural, steer toward Question 1.
+When it feels natural, steer toward Question 1.`;
+
+function setupReviseOpening(profile: OnboardingProfile, voice: VoiceProfile): string {
+  return `You are re-running the setup interview for an existing CRILOS client who
+has come back to update their profile.
+
+## Opening
+
+Open by greeting them back — short, warm, no re-introduction of yourself or
+of CRILOS, they already know who you are. Say plainly that you've got their
+setup on file and you're here to update it, then ask what's changed since
+last time: the business, the offer or price, how they deliver, their voice,
+or their goals. Then stop and wait — don't start working through the phases
+in the same message.
+
+${reviseBlock(`Name: ${fieldOrNone(profile.name)} (age ${fieldOrNone(profile.age)})
+Business: ${fieldOrNone(profile.businessName)} — ${fieldOrNone(profile.whatTheyDo)}
+Website: ${fieldOrNone(profile.website)}
+Offer: ${fieldOrNone(profile.offer)} at ${fieldOrNone(profile.pricePoint)}
+Delivery format: ${fieldOrNone(profile.deliveryFormat)}
+How leads arrive: ${fieldOrNone(profile.leadSource)}
+Tools: CRM ${fieldOrNone(profile.crm)}, calendar ${fieldOrNone(profile.calendar)}, email ${fieldOrNone(profile.emailTool)}, payment ${fieldOrNone(profile.payment)}, other ${fieldOrNone(profile.otherTools)}
+Dream AI outcome: ${fieldOrNone(profile.dreamOutcome)}
+
+90-day goal: ${fieldOrNone(profile.goal90)}
+Current bottleneck: ${fieldOrNone(profile.bottleneck)}
+Client-outcome KPI: ${fieldOrNone(profile.kpis)}
+
+Voice — tone: ${fieldOrNone(voice.toneDescriptors)}, energy: ${fieldOrNone(voice.energyLevel)}, formality: ${fieldOrNone(voice.formality)}, humor: ${fieldOrNone(voice.humor)}
+Voice — words used: ${fieldOrNone(voice.wordsUsed)}
+Voice — words avoided: ${fieldOrNone(voice.wordsAvoided)}
+Voice — claims that are safe: ${fieldOrNone(voice.claimsOk)}
+Voice — claims needing a real detail: ${fieldOrNone(voice.claimsGuarded)}
+Writing samples on file: ${voice.samples && voice.samples.length > 0 ? `${voice.samples.length} sample(s)` : "(none captured)"}`)}
+
+In Phase 3, don't ask for fresh writing samples unless they say their voice
+has changed or none are on file — the samples above already anchor it.
+
+In Phase 5, base the recommendation on their CURRENT bottleneck, whether
+that's the one above or one they just corrected. Don't repeat the advice
+they've already had.`;
+}
+
+export function buildSetupSystemPrompt(
+  // Present only when the client is redoing this stage -- switches the
+  // opening from first-contact to a review of what's already captured.
+  revising?: { profile: OnboardingProfile; voice: VoiceProfile },
+): string {
+  return `${SHARED_TONE}
+
+${revising ? setupReviseOpening(revising.profile, revising.voice) : SETUP_FIRST_CONTACT_OPENING}
 
 ## Phase 1 — Identity
 
@@ -107,12 +189,22 @@ conversation.
 ## Wrapping up
 
 Once Phase 4 is answered and Phase 5's recommendation has been delivered,
-tell them setup is complete and they can move on to defining their Ideal
-Client Avatar whenever they're ready. End that message with the exact
+${
+  revising
+    ? `tell them their setup is updated, and flag plainly that anything they
+changed here (business, offer, voice) may mean their Ideal Client Avatar and
+Content Bible are now built on older answers and worth a look.`
+    : `tell them setup is complete and they can move on to defining their Ideal
+Client Avatar whenever they're ready.`
+} End that message with the exact
 token ${STAGE_COMPLETE_SENTINEL} on its own, with nothing after it.`;
 }
 
-export function buildIcaSystemPrompt(profile: OnboardingProfile): string {
+export function buildIcaSystemPrompt(
+  profile: OnboardingProfile,
+  // Present only when redoing this stage -- the ICA already captured.
+  revising?: IcaProfile,
+): string {
   return `${SHARED_TONE}
 
 You are running the Ideal Client Avatar (ICA) interview — the deep-dive
@@ -125,7 +217,34 @@ short conversational interview, not a form.
 - Core offer: ${profile.offer ?? "(not captured)"} at ${profile.pricePoint ?? "(not captured)"}
 - Delivery format: ${profile.deliveryFormat ?? "(not captured)"}
 - How leads arrive: ${profile.leadSource ?? "(not captured)"}
+${
+  revising
+    ? `
+${reviseBlock(`Vertical served: ${fieldOrNone(revising.vertical)}
+Client's ideal result: ${fieldOrNone(revising.idealResult)}
 
+Ideal customer profile — age ${fieldOrNone(revising.icaAge)}, gender ${fieldOrNone(revising.icaGender)}, occupation ${fieldOrNone(revising.icaOccupation)}, location ${fieldOrNone(revising.icaLocation)}, income ${fieldOrNone(revising.icaIncome)}
+What keeps them up at night: ${fieldOrNone(revising.icaFears)}
+What they're scared it says about them: ${fieldOrNone(revising.icaScared)}
+What they avoid: ${fieldOrNone(revising.icaAvoids)}
+Worst case if they don't grow: ${fieldOrNone(revising.icaWorstCase)}
+Where they feel powerless: ${fieldOrNone(revising.icaPowerless)}
+What a signature offer would change: ${fieldOrNone(revising.icaSignatureOffer)}
+What eases their fear of investing: ${fieldOrNone(revising.icaEaseFear)}
+
+Customer avatar (behaviour): ${fieldOrNone(revising.customerAvatar)}
+Pain points (verbatim): ${fieldOrNone(revising.painPoints)}
+Goals & dreams (verbatim): ${fieldOrNone(revising.goalsDreams)}
+Who they don't serve: ${fieldOrNone(revising.icaExcludes)}
+Most common objection: ${fieldOrNone(revising.icaObjection)}`)}
+
+Present the ICP and Customer Avatar above as the existing draft to react to
+rather than generating them from scratch — regenerate only the parts they
+say are off, or if the setup details above have changed enough that the old
+profile no longer follows from them.
+`
+    : ""
+}
 ## Pre-flight — confirm before diving in
 
 Restate your read of the business/offer/price/delivery format back in a
@@ -185,6 +304,8 @@ export function buildContentBibleSystemPrompt(
   profile: OnboardingProfile,
   voice: VoiceProfile,
   ica: IcaProfile,
+  // Present only when redoing this stage -- the bible already mapped.
+  revising?: ContentBible,
 ): string {
   return `${SHARED_TONE}
 
@@ -199,7 +320,47 @@ move a lead to a client, and the steps/mechanisms used to hit each one.
 - ICA vertical: ${ica.vertical ?? "(not captured)"}, ideal result: ${ica.idealResult ?? "(not captured)"}
 - ICA pain points: ${ica.painPoints ?? "(not captured)"}
 - ICA most common objection: ${ica.icaObjection ?? "(not captured)"}
+${
+  revising
+    ? `
+${reviseBlock(`Overall aim: ${fieldOrNone(revising.overallAim)}
+Methodology name: ${fieldOrNone(revising.methodologyName)}
+Objections: ${fieldOrNone(revising.objections)}
+Voice of the customer quotes: ${fieldOrNone(revising.voc)}
 
+Goals / milestones:
+${
+  revising.goals && revising.goals.length > 0
+    ? revising.goals
+        .map(
+          (g, i) =>
+            `${i + 1}. Goal: ${g.goal} — Mechanism: ${g.mechanism} — Solves: ${g.problem} — Known hit when: ${g.knowsWhen}`,
+        )
+        .join("\n")
+    : "(none captured)"
+}
+
+Steps under each goal:
+${
+  revising.steps && revising.steps.length > 0
+    ? revising.steps
+        .map(
+          (goalSteps, gi) =>
+            `Goal ${gi + 1}:\n${goalSteps
+              .map((s, si) => `  ${si + 1}. ${s.step} — solves: ${s.problem} — resource: ${s.resource}`)
+              .join("\n")}`,
+        )
+        .join("\n")
+    : "(none captured)"
+}`)}
+
+Skip the outline-then-expand loop for any goal whose steps above are still
+right — show the existing table and ask what to change. Only rebuild a goal
+from an outline when they want it materially reworked, or when the ICA above
+has shifted enough that the old steps no longer follow.
+`
+    : ""
+}
 ## Pre-flight
 
 Briefly restate your read of their voice (a few words) and ICA (a phrase)

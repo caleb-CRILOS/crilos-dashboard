@@ -330,6 +330,18 @@ export interface OnboardingSession {
   setupComplete: boolean;
   icaComplete: boolean;
   contentBibleComplete: boolean;
+  // When each stage last finished, so the UI can tell that a later stage was
+  // built on answers a redo has since changed (ICA is stale if setup completed
+  // after it). Derived rather than stored as a flag so it can't drift. Absent
+  // on sessions predating this field -- those are treated as not stale, since
+  // the ordering genuinely isn't known.
+  stageCompletedAt?: Partial<Record<OnboardingStage, string>>;
+  // Stages currently being redone. Every CLI call gets a fresh --system-prompt
+  // even when resuming (see extractStructured in claude-cli.ts), so this has to
+  // persist across turns -- otherwise turn 2 of a redo would be handed the
+  // first-contact prompt and greet an existing client as a stranger. Cleared
+  // when the stage completes again.
+  revisingStages?: Partial<Record<OnboardingStage, boolean>>;
   // Metadata for generated deliverable PDFs, keyed by stage. The PDF bytes
   // themselves live on disk under data/deliverables/, not in this JSON file.
   deliverables: Partial<Record<OnboardingStage, DeliverableMeta>>;
