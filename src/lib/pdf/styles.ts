@@ -16,12 +16,16 @@ import { BrandTokens, BrandFontFile } from "../types";
 import { DEFAULT_TOKENS } from "../branding/standard";
 import { brandingPath } from "../branding/storage";
 
+// Per-field fallback for buildPdfStyles; kept in sync with DEFAULT_TOKENS in
+// branding/standard.ts. Mapped from the app's light-theme tokens so
+// un-branded PDFs read as part of the same product. Paper stays white --
+// these are printable client documents, not the app's dark UI.
 export const BRAND = {
-  ink: "#15140f",
+  ink: "#101725",
   paper: "#ffffff",
-  muted: "#5b5b5b",
-  line: "#e3e3e3",
-  electric: "#2e6fd6",
+  muted: "#4a5567",
+  line: "#e4e9f0",
+  electric: "#0c77c2",
 };
 
 export type PdfStyles = ReturnType<typeof buildPdfStyles>;
@@ -162,7 +166,7 @@ function makeStyles(
     fontSize: 8.5,
     fontFamily: headingFamily,
     fontWeight: headingFontWeight,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f1f5f9",
     textTransform: "uppercase",
   },
   tableCell: {

@@ -208,7 +208,7 @@ function buildEmailHtml(session: HawkSession): string {
 // so a dark brand doesn't get an off-white frame.
 function shade(paper: string): string {
   return paper.toLowerCase() === "#ffffff" || paper.toLowerCase() === "#fff"
-    ? "#f5f5f5"
+    ? "#f1f5f9"
     : paper;
 }
 

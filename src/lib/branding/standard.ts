@@ -24,14 +24,17 @@ export type ResolvedBrandTokens = Required<
 > &
   Pick<BrandTokens, "bodyFont" | "headingFont">;
 
-// The pre-branding look, so removing (or never setting) a standard renders
-// output identical to before this feature existed.
+// The pre-branding look, used whenever no brand kit is set. Mapped from the
+// app's light-theme design tokens (see src/app/globals.css) so an
+// un-branded deliverable reads as part of the same product: KORE Signal
+// blue accent, cool ink, cool hairlines. Paper stays white -- these are
+// printable, client-facing documents and never follow the app's dark theme.
 export const DEFAULT_TOKENS: ResolvedBrandTokens = {
-  primary: "#2e6fd6",
-  ink: "#15140f",
+  primary: "#0c77c2",
+  ink: "#101725",
   paper: "#ffffff",
-  muted: "#5b5b5b",
-  line: "#e3e3e3",
+  muted: "#4a5567",
+  line: "#e4e9f0",
   fontFamily: "Helvetica, Arial, sans-serif",
   headingFontFamily: "Helvetica, Arial, sans-serif",
 };
